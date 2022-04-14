@@ -1,0 +1,13 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+
+/* Your own custom component styles */
+
+.btn {
+  @apply rounded-full;
+}
+
+a {
+  @apply underline hover:decoration-wavy  decoration-primary
+}
+@import 'tailwindcss/utilities';
