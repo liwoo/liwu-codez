@@ -21,7 +21,7 @@ export const AnimationContext = createContext<AnimationContextProps>(null)
 
 export default function BackgroundAnimation(props: Props): JSX.Element {
   const fit = props.fit ?? Fit.Cover
-  const alignment = props.alignment ?? Alignment.CenterRight
+  const alignment = props.alignment ?? Alignment.TopRight
   const absolute = props.absolute ?? true
 
   const { theme } = useTheme()

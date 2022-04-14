@@ -4,9 +4,9 @@ import BackgroundAnimation, { AnimationContext } from "../components/background-
 function Home() {
   const interactions = useContext(AnimationContext)
   return (
-    <div className="container flex flex-col justify-end h-screen md:justify-center">
+    <div className="container flex flex-col justify-start h-screen md:justify-center">
       <div
-        className="p-2 mb-8 lg:mb-0 bg-base-100/75 lg:bg-transparent sm:p-4"
+        className="p-2 mt-16 md:mt-0 bg-base-100/75 lg:bg-transparent sm:p-4"
         onMouseOver={_e => interactions.startInteraction()}
         onMouseLeave={_e => interactions.endInteraction()}>
         <h1 className="my-2 text-2xl font-medium md:my-6">
