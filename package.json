@@ -8,13 +8,14 @@
     "start": "next start"
   },
   "dependencies": {
+    "daisyui": "^2.13.6",
     "next": "12.1.0",
+    "next-themes": "^0.1.1",
     "react": "17.0.2",
     "react-dom": "17.0.2",
+    "react-spring": "^9.4.4",
     "rive-react": "^1.0.3",
-    "theme-change": "^2.0.2",
-    "next-themes": "^0.1.1",
-    "daisyui": "^2.13.6"
+    "theme-change": "^2.0.2"
   },
   "devDependencies": {
     "@types/node": "^17.0.21",

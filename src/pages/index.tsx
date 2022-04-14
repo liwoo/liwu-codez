@@ -1,11 +1,32 @@
+import { animated, useSpring } from "@react-spring/web"
 import { useContext } from "react"
 import BackgroundAnimation, { AnimationContext } from "../components/background-animation"
 
 function Home() {
   const interactions = useContext(AnimationContext)
+  const START_FROM = 4000
+  const titleStyles = useSpring({
+    from: { translateY: -200, opacity: 0 },
+    to: { translateY: 0, opacity: 1 },
+    delay: START_FROM
+  });
+
+  const button1Styles = useSpring({
+    from: { scale: 0, opacity: 0 },
+    to: { scale: 1, opacity: 1 },
+    delay: START_FROM + 500
+  });
+
+  const button2Styles = useSpring({
+    from: { scale: 0, opacity: 0 },
+    to: { scale: 1, opacity: 1 },
+    delay: START_FROM + 1000
+  });
+
   return (
     <div className="container flex flex-col justify-start h-screen md:justify-center">
-      <div
+      <animated.div
+        style={titleStyles}
         className="p-2 mt-16 md:mt-0 bg-base-100/75 lg:bg-transparent sm:p-4"
         onMouseOver={_e => interactions.startInteraction()}
         onMouseLeave={_e => interactions.endInteraction()}>
@@ -28,10 +49,10 @@ function Home() {
           <a> writing Software that improves peoples lives. </a>
         </p>
         <div className="flex my-4 gap-x-2 lg:gap-x-4">
-          <button className="btn btn-primary md:btn-lg"> Get in touch </button>
-          <button className="btn btn-secondary md:btn-lg">View my work</button>
+          <animated.div style={button1Styles}><button className="btn btn-primary md:btn-lg"> Get in touch </button></animated.div>
+          <animated.div style={button2Styles}><button className="btn btn-secondary md:btn-lg">View my work</button></animated.div>
         </div>
-      </div>
+      </animated.div>
     </div>
   )
 }

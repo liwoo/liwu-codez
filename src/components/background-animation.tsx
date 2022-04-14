@@ -56,7 +56,7 @@ export default function BackgroundAnimation(props: Props): JSX.Element {
   useEffect(() => {
     setTimeout(() => {
       setLoaded(true)
-    }, 100)
+    }, 1000)
   }, []);
 
   function toggleTheme() {
