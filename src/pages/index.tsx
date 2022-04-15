@@ -11,20 +11,27 @@ function Home() {
     delay: START_FROM
   });
 
+  const subtitleStyles = useSpring({
+    from: { opacity: 1 },
+    to: { opacity: 0 },
+    delay: START_FROM - 1000
+  });
+
   const button1Styles = useSpring({
     from: { scale: 0, opacity: 0 },
     to: { scale: 1, opacity: 1 },
-    delay: START_FROM + 500
+    delay: START_FROM + 2000
   });
 
   const button2Styles = useSpring({
     from: { scale: 0, opacity: 0 },
     to: { scale: 1, opacity: 1 },
-    delay: START_FROM + 1000
+    delay: START_FROM + 2500
   });
 
   return (
     <div className="container flex flex-col justify-start h-screen md:justify-center">
+      <animated.div style={subtitleStyles} className="absolute text-xl text-center inset-1/4 top-16 lg:top-64"> <h1>Somewhere in Limbe, Blantyre...</h1> </animated.div>
       <animated.div
         style={titleStyles}
         className="p-2 mt-16 md:mt-0 bg-base-100/75 lg:bg-transparent sm:p-4"
