@@ -31,7 +31,7 @@ function Home() {
 
   return (
     <div className="container flex flex-col justify-start h-screen md:justify-center">
-      <animated.div style={subtitleStyles} className="absolute text-xl text-center inset-1/4 top-16 lg:top-64"> <h1>Somewhere in Limbe, Blantyre...</h1> </animated.div>
+      <animated.div style={subtitleStyles} className="absolute h-12 text-xl text-center inset-1/4 top-16 lg:top-64"> <h1>Somewhere in Limbe, Blantyre...</h1> </animated.div>
       <animated.div
         style={titleStyles}
         className="p-2 mt-16 md:mt-0 bg-base-100/75 lg:bg-transparent sm:p-4"
