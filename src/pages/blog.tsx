@@ -61,22 +61,22 @@ function BlogPage() {
     <div className="container p-4">
       <ArticleContainer classOverrides="flex items-center xl:-mt-36">
         <>
-          <div className="w-full sm:w-4/5 md:w-1/2">
+          <div className="w-full sm:w-4/5 md:w-2/3 lg:w-1/2">
             <h1 className="text-2xl font-bold leading-tight md:text-4xl lg:text-5xl">My thoughts on Coding & Tech</h1>
             <p className="my-4">Join me on my journey of learning new and exciting trends in Tech including Web3, Frontend, Backend, Mobile and AI </p>
             <div className="relative">
-              <input type="email" placeholder="Enter Your Email Address" className="w-full input input-lg" />
-              <button className="absolute mt-2 right-2 btn btn-primary">Subscribe</button>
+              <input type="email" placeholder="Enter Your Email to Subscribe" className="w-full input input-lg" />
+              <button className="absolute mt-2 text-2xl md:text-sm right-2 btn btn-primary"><span className="md:hidden">&#8674;</span><span className="hidden md:block">Subscribe</span></button>
             </div>
           </div>
-          <div className="hidden w-1/2 md:block">
+          <div className="hidden md:w-1/3 lg:w-1/2 md:block">
             <Image width={600} height={600} src="/img/3d/blog.png" className="border" />
           </div>
         </>
       </ArticleContainer>
       <ArticleContainer classOverrides="flex w-full gap-x-6 my-8 lg:my-2">
-        <a className={`text-4xl no-underline ${`opacity-100 border-b border-b-2`}`}>Blog Posts</a>
-        <a className={`text-4xl no-underline ${`opacity-50`}`}>Videos</a>
+        <a className={`text-2xl md:text-4xl no-underline ${`opacity-100 border-b border-offBlack dark:border-offWhite border-text border-b-2`}`}>Blog Posts</a>
+        <a className={`text-2xl md:text-4xl no-underline ${`opacity-50`}`}>Videos</a>
       </ArticleContainer>
       <ArticleContainer classOverrides="grid py-4 gap-8 grid-cols-max grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
         {articles.map(article => (
@@ -95,7 +95,7 @@ function Article({ article }: { article: Article }): JSX.Element {
         <h2 className="card-title">
           {article.title}
         </h2>
-        <p>If a dog chews shoes whose shoes does he choose?</p>
+        <p>{humanReadableDate(article.date)}</p>
         <div className="justify-end card-actions">
           <div className="badge badge-outline">Fashion</div>
           <div className="badge badge-outline">Products</div>
@@ -103,6 +103,14 @@ function Article({ article }: { article: Article }): JSX.Element {
       </div>
     </div>
   )
+}
+
+export function humanReadableDate(date: string): string {
+  return new Date(date).toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  })
 }
 
 export default function Blog() {

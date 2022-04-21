@@ -13,6 +13,10 @@ module.exports = {
         '2xl': '18rem'
       }
     },
+    colors: {
+      offBlack: '#032F4C',
+      offWhite: '#D2CBCB'
+    },
     extend: {
     },
     /* Most of the time we customize the font-sizes,

@@ -2,6 +2,7 @@ import { useTheme } from "next-themes"
 import Link from "next/link"
 import { useRouter } from "next/router"
 import { useEffect, useRef, useState } from "react"
+import useScroll from "../hooks/use-scroll"
 import Github from "./icons/github"
 import LinkedIn from "./icons/linkedin"
 import Spotify from "./icons/spotify"
@@ -98,7 +99,12 @@ export default function Nav() {
     router.events.on("routeChangeStart", closeMenu)
   }, [])
 
-  return <nav className="absolute z-20 flex items-start justify-between w-full p-4 lg:px-16 xl:px-32">
+  const scrollY = useScroll()
+  const SCROLL_THRESHOLD = 100
+  const menuBgLg = 'transition-all xl:shadow xl:bg-offWhite xl:dark:bg-offBlack'
+  const menuBg = 'transition-all rounded-lg shadow xl:shadow-none bg-offWhite xl:bg-transparent dark:bg-offBlack'
+
+  return <nav className={`${scrollY > SCROLL_THRESHOLD ? `fixed ${menuBgLg}` : 'absolute'} z-20 flex items-start xl:items-center justify-between w-full p-4 lg:px-16 xl:px-32`}>
     <div className="flex items-center gap-x-3">
       <button
         onClick={_e => setTheme(switchTo)}
@@ -116,7 +122,7 @@ export default function Nav() {
 
       </label>
     </div>
-    <ul className="items-center justify-around hidden w-2/3 uppercase md:flex px-auto xl:w-1/2">
+    <ul className={`items-center justify-around hidden w-2/3 px-4 py-2 ${scrollY > SCROLL_THRESHOLD ? menuBg : ''} uppercase md:flex px-auto xl:w-1/2`}>
       {theme && menuItems.map(item => <li key={item.label} className="my-2">
         <Link href={item.href}>
           <a className={`${item.href === router.pathname ? activeStyle : ""} no-underline py-4 hover:text-primary transition-all`}>{item.label}</a>
@@ -124,7 +130,7 @@ export default function Nav() {
       </li>)}
     </ul>
     <ul className="flex-col items-center justify-around hidden md:flex xl:flex-row gap-x-6">
-      {theme && socialMediaItems.map(item => <li key={item.label} className="p-1 my-2 border border-2 rounded-full border-[#032F4C] dark:border-[#D2CBCB]">
+      {theme && socialMediaItems.map(item => <li key={item.label} className="p-1 my-2 border border-2 rounded-full border-offBlack dark:border-offWhite">
         <a href={item.link} target="_blank" rel="noopener noreferrer">
           {item.icon}
         </a>

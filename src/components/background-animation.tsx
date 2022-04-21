@@ -82,7 +82,7 @@ export default function BackgroundAnimation(props: Props): JSX.Element {
       endInteraction: () => triggerInteraction(false)
     }}>
       <div style={{ position: "relative" }} className={`${!loaded ? 'opacity-0' : 'opacity-1'} transition-all min-h-screen bg-accent/25 duration-500`}>
-     <RiveComponent style={{ width: '100%', height: absolute ? '100vh' : size.width / 2.67, position: absolute ? 'absolute' : "inherit", zIndex: -20 }} />
+        <RiveComponent style={{ width: '100%', height: absolute ? '100vh' : size.width / 2.67, position: absolute ? 'absolute' : "inherit", zIndex: -20 }} />
         {props.children}
       </div>
     </AnimationContext.Provider >

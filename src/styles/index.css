@@ -10,4 +10,8 @@
 a {
   @apply underline hover:decoration-wavy  decoration-primary
 }
+
+code {
+  @apply bg-accent p-2 rounded-lg font-bold
+}
 @import 'tailwindcss/utilities';
