@@ -5,6 +5,9 @@ import Image from "next/image"
 import ArticleContainer from "../components/article-container"
 import { useContext, useEffect, useState } from "react"
 import { animated, config, useSpring } from "@react-spring/web"
+import Terminal from "../components/icons/terminal"
+import Streaming from "../components/icons/streaming"
+import Reading from "../components/icons/reading"
 
 interface Article {
   id: string
@@ -96,7 +99,7 @@ const words: DescriptiveWord[] = [
   },
 ]
 
-type Label = "Personal" | "Professional" | "Education" | "Other"
+type Label = "personal" | "professional" | "education" | "other"
 
 interface Activity {
   id: string
@@ -106,17 +109,12 @@ interface Activity {
   label: Label
   startDate: Date
   endDate: Date
+  location: string
+  showRange: boolean
 }
 
 type Milestone = Activity | number
 
-
-const labelColors: Record<Label, string> = {
-  Personal: "#f5f5f5",
-  Professional: "#f5f5f5",
-  Education: "#f5f5f5",
-  Other: "#f5f5f5",
-}
 
 //list of milestones
 const milestones: Milestone[] = [
@@ -125,37 +123,58 @@ const milestones: Milestone[] = [
     id: "1",
     title: "👶  Born",
     description: "Born in a small picturesque village in the south of Malawi called Thyolo",
-    label: "Personal",
+    label: "personal",
     startDate: new Date(1990, 0, 1),
     endDate: new Date(1990, 0, 1),
+    location: "Thyolo, Malawi",
+    showRange: false,
   },
   2006,
   {
     id: "2",
-    title: "Graduated from University of California, Irvine",
-    description: "Graduated from University of California, Irvine",
-    image: "https://images.unsplash.com/photo-1518791841217-8f162f1e1131?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=80",
-    label: "Education",
-    startDate: new Date("2020-01-01"),
-    endDate: new Date("2020-01-01"),
+    title: "I'm on TV",
+    description: "I made my first appearance as a Sports Anchor on TV to cover the 2006 World Cup",
+    label: "personal",
+    startDate: new Date(2006, 6, 1),
+    endDate: new Date(2006, 6, 1),
+    location: "Blantyre, Malawi",
+    showRange: false,
   },
+  2011,
   {
     id: "2",
-    title: "Started working at Google",
-    description: "Started working at Google",
+    title: "🎓  Graduated",
+    description: "Graduated from the University of Malawi, The Polytechnic",
     image: "https://images.unsplash.com/photo-1518791841217-8f162f1e1131?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=80",
-    label: "Professional",
-    startDate: new Date("2020-01-01"),
-    endDate: new Date("2020-01-01"),
+    label: "education",
+    startDate: new Date("2007-07-01"),
+    endDate: new Date("2012-07-01"),
+    location: "Blantyre, Malawi",
+    showRange: true,
   },
+  2014,
   {
     id: "3",
-    title: "Started working at Google",
-    description: "Started working at Google",
+    title: "🎓🎓  Graduated, Again!",
+    description: "Completed my Masters in Computer Science from Doshisha University, Japan",
     image: "https://images.unsplash.com/photo-1518791841217-8f162f1e1131?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=80",
-    label: "Professional",
-    startDate: new Date("2020-01-01"),
-    endDate: new Date("2020-01-01"),
+    label: "education",
+    startDate: new Date("2014-07-01"),
+    endDate: new Date("2017-05-01"),
+    location: "Kyoto, Japan",
+    showRange: true,
+  },
+  2017,
+  {
+    id: "4",
+    title: "Wedding Bells 💒",
+    description: "Married my College sweet❤️, before moving to Lilongwe",
+    image: "https://images.unsplash.com/photo-1518791841217-8f162f1e1131?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=80",
+    label: "personal",
+    startDate: new Date("2017-09-02"),
+    endDate: new Date("2017-09-02"),
+    location: "Blantyre, Malawi",
+    showRange: false,
   },
 ]
 
@@ -172,8 +191,10 @@ function AboutPage() {
 
 
   const [intersected, setIntersected] = useState(initialIntersected)
+  const [timelineHeight, setTimelineHeight] = useState(0)
 
   const interactions = useContext(AnimationContext)
+
   useEffect(() => {
     const observer = new IntersectionObserver(entries => {
       entries.forEach(entry => {
@@ -191,6 +212,11 @@ function AboutPage() {
         observer.observe(refArticle)
       }
     })
+
+    const timeline = document.getElementById("timeline")
+    if (timeline) {
+      setTimelineHeight(timeline.clientHeight)
+    }
   }, [])
 
 
@@ -258,7 +284,7 @@ function AboutPage() {
 
             <div className="stat">
               <div className="stat-figure text-primary">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-8 h-8 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <Terminal classOverride="w-6 h-6 fill-primary" />
               </div>
               <div className="stat-title">Contributions</div>
               <div className="stat-value">615</div>
@@ -267,7 +293,7 @@ function AboutPage() {
 
             <div className="stat">
               <div className="stat-figure text-primary">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-8 h-8 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+                <Streaming classOverride="w-8 h-8 fill-primary" />
               </div>
               <div className="stat-title">Monthly Streams</div>
               <div className="stat-value">4,200</div>
@@ -276,21 +302,22 @@ function AboutPage() {
 
             <div className="stat">
               <div className="stat-figure text-primary">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-8 h-8 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
+                <Reading classOverride="w-8 h-8 fill-primary" />
               </div>
-              <div className="stat-title">Monthly Reads</div>
+              <div className="stat-title">Total Reads</div>
               <div className="stat-value">60</div>
-              <div className="stat-desc">↘︎ 90 (14%)</div>
+              <div className="stat-desc">of my Blog</div>
             </div>
 
           </div>
         </ArticleContainer>
       </animated.div>
-      <animated.div style={contentStyles}>
-        <ArticleContainer classOverrides="grid py-4 gap-8 grid-cols-max grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
-          {articles.map(article => (
-            <Article article={article} intersected={findRefArticle(article)} />
-          ))}
+      <animated.div style={contentStyles} id="timeline">
+        <div className="absolute w-2 rounded-full inset-x-1/2 bg-offWhite dark:bg-offBlack" style={{ height: timelineHeight, zIndex: -10 }} />
+        <ArticleContainer classOverrides="flex flex-col my-12 lg:mb-40">
+          {milestones.map(milestone => {
+            return typeof milestone === 'number' ? <Year title={milestone} key={milestone} /> : <Activity milestone={milestone} key={milestone.id} />
+          })}
         </ArticleContainer>
       </animated.div>
     </div>
@@ -317,6 +344,42 @@ function DescriptiveWord({ word }: { word: DescriptiveWord }) {
   )
 }
 
+
+function Year({ title }: { title: number }) {
+  return (
+    <div className="flex flex-col items-center justify-center w-full my-12">
+      <div className="p-3 text-xl rounded bg-accent text-primary">{title}</div>
+    </div>
+  )
+}
+
+function Activity({ milestone }: { milestone: Activity }) {
+  return (
+    <>
+      <div className="flex flex-col items-start justify-start w-full p-6 mx-auto text-left shadow lg:-ml-8 md:w-3/4 lg:w-1/2 lg:flex-row gap-x-6 bg-base-100/75">
+        <div className="absolute hidden w-8 h-8 -ml-3 rounded-full lg:block inset-x-1/2 bg-offBlack dark:bg-offWhite" />
+        {milestone.image ?
+          <div className="w-full mb-8 lg:w-1/2 lg:mb-0">
+            <img className="mx-auto mask mask-squircle" src={milestone.image} />
+          </div>
+          : null}
+        <div className="flex flex-col">
+          <div className="flex flex-col items-center justify-between lg:flex-row">
+            <div className="mb-3 text-2xl font-bold">{milestone.title}</div>
+            <div className={`my-4 p-2 rounded text-sm bg-${milestone.label}/25 text-${milestone.label} uppercase`}>{milestone.label}</div>
+          </div>
+          <div className="text-lg">{milestone.description}</div>
+          <div className="flex flex-row justify-between mt-4">
+            <p className="text-sm font-bold">&#9906; {milestone.location}</p>
+            <p>&#9778; {`${monthYear(milestone.startDate)} ${milestone.showRange ? ` - ${monthYear(milestone.endDate)}` : ''}`}</p>
+          </div>
+        </div>
+      </div>
+    </>
+  )
+}
+
+
 function Article({ article, intersected }: { article: Article, intersected: boolean }): JSX.Element {
   return (
     <div id={article.id} className={`w-full ${intersected ? 'translate-y-0 opacity-100' : 'translate-y-32 opacity-25'} transition-all hover:skew-y-1 transition-transform duration-500 delay-600 hover:text-primary shadow-sm hover:shadow-lg card bg-base-100`}>
@@ -339,6 +402,13 @@ export function humanReadableDate(date: string): string {
   return new Date(date).toLocaleDateString("en-US", {
     month: "long",
     day: "numeric",
+    year: "numeric",
+  })
+}
+
+export function monthYear(date: Date): string {
+  return date.toLocaleDateString("en-US", {
+    month: "long",
     year: "numeric",
   })
 }

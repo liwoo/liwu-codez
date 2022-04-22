@@ -158,7 +158,7 @@ function BlogPage() {
         </ArticleContainer>
       </animated.div>
       <animated.div style={contentStyles}>
-        <ArticleContainer classOverrides="grid py-4 gap-8 grid-cols-max grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
+        <ArticleContainer classOverrides="grid py-4 gap-8 lg:gap-16 grid-cols-max grid-cols-1 md:grid-cols-2 lg:mb-28 lg:mt-12 xl:grid-cols-3">
           {articles.map(article => (
             <Article article={article} intersected={findRefArticle(article)} />
           ))}

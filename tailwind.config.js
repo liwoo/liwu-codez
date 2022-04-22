@@ -15,7 +15,11 @@ module.exports = {
     },
     colors: {
       offBlack: '#032F4C',
-      offWhite: '#D2CBCB'
+      offWhite: '#D2CBCB',
+      personal: "#D044BB",
+      professional: "#493BB4",
+      education: "#D9914D",
+      other: "#70D94D",
     },
     extend: {
     },
