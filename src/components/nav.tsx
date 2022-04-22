@@ -137,7 +137,7 @@ export default function Nav() {
       </li>)}
     </ul>
     <div className="absolute">
-      <ul className={`fixed right-0 transition-all duration-300 overflow-x-hidden ${isOpen ? `translate-x-0` : `translate-x-80`} menu w-80 bg-base-100 text-base-content`}>
+      <ul className={`fixed right-0 transition-all duration-300 overflow-x-hidden ${isOpen ? `translate-x-0` : `translate-x-80`} menu w-64 bg-base-100 text-base-content`}>
         {theme && menuItems.map(item => <li key={item.label} className="my-2">
           <Link href={item.href}>
             <a className={`${item.href === router.pathname ? "text-primary font-bold" : ""} no-underline py-4 hover:text-primary transition-all`}>{item.label}</a>

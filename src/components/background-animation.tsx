@@ -3,8 +3,10 @@ import { createContext, useEffect, useState } from "react";
 import { Alignment, Fit, Layout, useRive, useStateMachineInput } from "rive-react";
 import useWindowSize from "../hooks/use-window-size";
 
+type Scene = "Home" | "Generic" | "Contact";
+
 interface Props {
-  scene: string
+  scene: Scene
   children: React.ReactNode
   fit?: Fit
   alignment?: Alignment
@@ -15,6 +17,7 @@ interface Props {
 interface AnimationContextProps {
   startInteraction: () => void
   endInteraction: () => void
+  loaded: boolean
 }
 
 export const AnimationContext = createContext<AnimationContextProps>(null)
@@ -33,6 +36,9 @@ export default function BackgroundAnimation(props: Props): JSX.Element {
     artboard: props.scene,
     stateMachines: "State machine",
     autoplay: true,
+    onLoad: () => {
+      setLoaded(true)
+    },
     layout: new Layout({
       fit: fit,
       alignment: alignment
@@ -55,14 +61,16 @@ export default function BackgroundAnimation(props: Props): JSX.Element {
 
   useEffect(() => {
     setTimeout(() => {
-      setLoaded(true)
-    }, 1000)
+      if (!loaded)
+        setLoaded(true)
+    }, 4000)
   }, []);
+
 
   function toggleTheme() {
     if (rive && (theme === "dark")) {
       changeTheme.value = 100;
-    } <svg width="45" height="34" xmlns="http://www.w3.org/2000/svg"><path fill="#2A5083" d="M23.42.285.326 33.124h43.776z" fill-rule="evenodd" /></svg>
+    }
 
     if (rive && (theme === "light")) {
       changeTheme.value = -100;
@@ -79,7 +87,8 @@ export default function BackgroundAnimation(props: Props): JSX.Element {
   return (
     <AnimationContext.Provider value={{
       startInteraction: () => triggerInteraction(true),
-      endInteraction: () => triggerInteraction(false)
+      endInteraction: () => triggerInteraction(false),
+      loaded: loaded
     }}>
       <div style={{ position: "relative" }} className={`${!loaded ? 'opacity-0' : 'opacity-1'} transition-all min-h-screen bg-accent/25 duration-500`}>
         <RiveComponent style={{ width: '100%', height: absolute ? '100vh' : size.width / 2.67, position: absolute ? 'absolute' : "inherit", zIndex: -20 }} />
