@@ -8,6 +8,8 @@ import { animated, config, useSpring } from "@react-spring/web"
 import Terminal from "../components/icons/terminal"
 import Streaming from "../components/icons/streaming"
 import Reading from "../components/icons/reading"
+import useWindowSize from "../hooks/use-window-size"
+import { info } from "console"
 
 interface Article {
   id: string
@@ -142,7 +144,7 @@ const milestones: Milestone[] = [
   },
   2011,
   {
-    id: "2",
+    id: "3",
     title: "🎓  Graduated",
     description: "Graduated from the University of Malawi, The Polytechnic",
     image: "https://images.unsplash.com/photo-1518791841217-8f162f1e1131?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=80",
@@ -154,7 +156,7 @@ const milestones: Milestone[] = [
   },
   2014,
   {
-    id: "3",
+    id: "4",
     title: "🎓🎓  Graduated, Again!",
     description: "Completed my Masters in Computer Science from Doshisha University, Japan",
     image: "https://images.unsplash.com/photo-1518791841217-8f162f1e1131?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=80",
@@ -166,7 +168,7 @@ const milestones: Milestone[] = [
   },
   2017,
   {
-    id: "4",
+    id: "5",
     title: "Wedding Bells 💒",
     description: "Married my College sweet❤️, before moving to Lilongwe",
     image: "https://images.unsplash.com/photo-1518791841217-8f162f1e1131?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=80",
@@ -179,46 +181,46 @@ const milestones: Milestone[] = [
 ]
 
 function AboutPage() {
-  const initialIntersected = articles.map(article => {
+  const initialIntersected = milestones.filter(milestone => typeof milestone !== 'number').map(milestone => {
     return {
-      id: article.id,
+      id: (milestone as Activity).id,
       intersected: false,
       touched: 0
     }
   })
 
-  // [ { id: "1", intersected: false }, { id: "2", intersected: false } ]
-
-
   const [intersected, setIntersected] = useState(initialIntersected)
   const [timelineHeight, setTimelineHeight] = useState(0)
+  const windowSize = useWindowSize()
 
   const interactions = useContext(AnimationContext)
 
   useEffect(() => {
     const observer = new IntersectionObserver(entries => {
       entries.forEach(entry => {
-        const refArticle = intersected.find(article => article.id === entry.target.id)
-        if (!refArticle.intersected) {
-          refArticle.intersected = entry.isIntersecting
+        const refMilestone = intersected.find(milestone => milestone.id === entry.target.id)
+        if (!refMilestone.intersected) {
+          refMilestone.intersected = entry.isIntersecting
           setIntersected([...intersected])
         }
       })
     }, { threshold: 0.2 })
 
-    articles.forEach(article => {
-      const refArticle = document.getElementById(article.id)
-      if (refArticle) {
-        observer.observe(refArticle)
+    milestones.filter(milestone => typeof milestone !== 'number').forEach(milestone => {
+      const refMilestone = document.getElementById((milestone as Activity).id)
+      if (refMilestone) {
+        observer.observe(refMilestone)
       }
     })
 
+  }, [])
+
+  useEffect(() => {
     const timeline = document.getElementById("timeline")
     if (timeline) {
       setTimelineHeight(timeline.clientHeight)
     }
-  }, [])
-
+  }, [windowSize])
 
   const START_FROM = 500
 
@@ -279,7 +281,7 @@ function AboutPage() {
       </ArticleContainer>
       <animated.div style={contentStyles}>
         <ArticleContainer classOverrides="flex flex-col items-center w-full gap-x-6 my-8 lg:my-20">
-          <h3 className="my-6 text-lg">My life in Numbers</h3>
+          <h3 className="my-6 text-lg">My Life in Numbers</h3>
           <div className="mx-auto shadow stats stats-vertical md:stats-horizontal">
 
             <div className="stat">
@@ -316,15 +318,17 @@ function AboutPage() {
         <div className="absolute w-2 rounded-full inset-x-1/2 bg-offWhite dark:bg-offBlack" style={{ height: timelineHeight, zIndex: -10 }} />
         <ArticleContainer classOverrides="flex flex-col my-12 lg:mb-40">
           {milestones.map(milestone => {
-            return typeof milestone === 'number' ? <Year title={milestone} key={milestone} /> : <Activity milestone={milestone} key={milestone.id} />
+            return typeof milestone === 'number'
+              ? <Year title={milestone} key={milestone} />
+              : <Activity milestone={milestone} key={milestone.id} intersected={findRefMilestone(milestone)} />
           })}
         </ArticleContainer>
       </animated.div>
     </div>
   )
 
-  function findRefArticle(article: Article) {
-    const found = intersected.find(art => art.id === article.id)
+  function findRefMilestone(milestone: Activity) {
+    const found = intersected.find(mile => mile.id === milestone.id)
     return found.intersected
   }
 }
@@ -353,11 +357,12 @@ function Year({ title }: { title: number }) {
   )
 }
 
-function Activity({ milestone }: { milestone: Activity }) {
+function Activity({ milestone, intersected }: { milestone: Activity, intersected: boolean }) {
+  const isEven = Number(milestone.id) % 2 === 0
   return (
-    <>
-      <div className="flex flex-col items-start justify-start w-full p-6 mx-auto text-left shadow lg:-ml-8 md:w-3/4 lg:w-1/2 lg:flex-row gap-x-6 bg-base-100/75">
-        <div className="absolute hidden w-8 h-8 -ml-3 rounded-full lg:block inset-x-1/2 bg-offBlack dark:bg-offWhite" />
+    <div>
+      <div className="absolute hidden w-8 h-8 -ml-3 rounded-full lg:block inset-x-1/2 bg-offBlack dark:bg-offWhite" />
+      <div id={milestone.id} className={`flex flex-col ${intersected ? 'translate-y-0' : 'translate-y-64'} transition-all duration-300 items-center w-full md:w-3/4 p-6 mx-auto text-left shadow ${isEven ? 'lg:-ml-8' : 'lg:-mr-8'} lg:w-1/2 lg:flex-row gap-x-6 bg-base-100/75`}>
         {milestone.image ?
           <div className="w-full mb-8 lg:w-1/2 lg:mb-0">
             <img className="mx-auto mask mask-squircle" src={milestone.image} />
@@ -375,35 +380,8 @@ function Activity({ milestone }: { milestone: Activity }) {
           </div>
         </div>
       </div>
-    </>
-  )
-}
-
-
-function Article({ article, intersected }: { article: Article, intersected: boolean }): JSX.Element {
-  return (
-    <div id={article.id} className={`w-full ${intersected ? 'translate-y-0 opacity-100' : 'translate-y-32 opacity-25'} transition-all hover:skew-y-1 transition-transform duration-500 delay-600 hover:text-primary shadow-sm hover:shadow-lg card bg-base-100`}>
-      <figure><img src={article.image} className="w-full" alt="Shoes" /></figure>
-      <div className="card-body">
-        <h2 className="card-title">
-          {article.title}
-        </h2>
-        <p>{humanReadableDate(article.date)}</p>
-        <div className="justify-end card-actions">
-          <div className="badge badge-outline">Fashion</div>
-          <div className="badge badge-outline">Products</div>
-        </div>
-      </div>
     </div>
   )
-}
-
-export function humanReadableDate(date: string): string {
-  return new Date(date).toLocaleDateString("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  })
 }
 
 export function monthYear(date: Date): string {
