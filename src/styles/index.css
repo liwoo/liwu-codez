@@ -14,4 +14,12 @@ a {
 code {
   @apply bg-accent p-2 rounded-lg font-bold
 }
+
+blockquote {
+  @apply text-xl italic before:content-["\275D"] before:text-4xl
+}
+
+cite {
+  @apply py-4 before:content-["\2015"]
+}
 @import 'tailwindcss/utilities';
