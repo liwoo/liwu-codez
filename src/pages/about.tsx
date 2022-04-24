@@ -9,74 +9,84 @@ import Terminal from "../components/icons/terminal"
 import Streaming from "../components/icons/streaming"
 import Reading from "../components/icons/reading"
 import useWindowSize from "../hooks/use-window-size"
-import { info } from "console"
+import WebDev from "../../public/icons/web-dev"
 
-interface Article {
+type Label = "personal" | "professional" | "education" | "other"
+
+interface Activity {
   id: string
   title: string
-  date: string
   description: string
-  image: string
-  link: string
+  image?: string
+  label: Label
+  startDate: Date
+  endDate: Date
+  location: string
+  showRange: boolean
 }
 
-const articles: Article[] = [
-  {
-    id: "1",
-    title: "How to build a blockchain",
-    date: "2020-01-01",
-    description: "How to build a blockchain",
-    image: "https://images.unsplash.com/photo-1638913662252-70efce1e60a7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
-    link: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-  },
-  {
-    id: "2",
-    title: "How to build a blockchain",
-    date: "2020-01-01",
-    description: "How to build a blockchain",
-    image: "https://images.unsplash.com/photo-1638913662252-70efce1e60a7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
-    link: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-  },
-  {
-    id: "3",
-    title: "How to build a blockchain",
-    date: "2020-01-01",
-    description: "How to build a blockchain",
-    image: "https://images.unsplash.com/photo-1638913662252-70efce1e60a7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
-    link: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-  },
-  {
-    id: "4",
-    title: "How to build a blockchain",
-    date: "2020-01-01",
-    description: "How to build a blockchain",
-    image: "https://images.unsplash.com/photo-1638913662252-70efce1e60a7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
-    link: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-  },
-  {
-    id: "5",
-    title: "How to build a blockchain",
-    date: "2020-01-01",
-    description: "How to build a blockchain",
-    image: "https://images.unsplash.com/photo-1638913662252-70efce1e60a7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
-    link: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-  },
-  {
-    id: "6",
-    title: "How to build a blockchain",
-    date: "2020-01-01",
-    description: "How to build a blockchain",
-    image: "https://images.unsplash.com/photo-1638913662252-70efce1e60a7?ixlib=rb-1.2.1&ixid=MnwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80",
-    link: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-  },
-]
-
+type Milestone = Activity | number
 
 interface DescriptiveWord {
   word: string
   description: string
   emoji: string
 }
+
+
+//record of Labels to colors
+const labelColors: { [key in Label]: string } = {
+  personal: "#D044BB",
+  professional: "#493BB4",
+  education: "#D9914D",
+  other: "#70D94D",
+}
+
+interface Service {
+  id: string
+  icon: string
+  title: string
+  description: string
+}
+
+const services: Service[] = [
+  {
+    id: "web",
+    icon: "icons/web-dev.svg",
+    title: "Websites and WebApp Development",
+    description: "I use the terminal to manage my projects and manage my time.",
+  },
+  {
+    id: "mobile",
+    icon: "icons/smartphone.svg",
+    title: "Mobile App Development",
+    description: "I stream a lot of things, mostly music and games.",
+  },
+  {
+    id: "api",
+    icon: "icons/api.svg",
+    title: "API Design and Development",
+    description: "I read a lot of books and articles.",
+  },
+  {
+    id: "speak",
+    icon: "icons/hoodie.svg",
+    title: "Speaking & Technical Writing",
+    description: "I read a lot of books and articles.",
+  },
+  {
+    id: "ui",
+    icon: "icons/responsive.svg",
+    title: "UX/UI Design",
+    description: "I stream a lot of things, mostly music and games.",
+  },
+  {
+    id: "web3",
+    icon: "icons/smart-contracts.svg",
+    title: "Smart Contract Development",
+    description: "I read a lot of books and articles.",
+  },
+]
 
 const words: DescriptiveWord[] = [
   {
@@ -100,23 +110,6 @@ const words: DescriptiveWord[] = [
     emoji: "🪄",
   },
 ]
-
-type Label = "personal" | "professional" | "education" | "other"
-
-interface Activity {
-  id: string
-  title: string
-  description: string
-  image?: string
-  label: Label
-  startDate: Date
-  endDate: Date
-  location: string
-  showRange: boolean
-}
-
-type Milestone = Activity | number
-
 
 //list of milestones
 const milestones: Milestone[] = [
@@ -190,10 +183,13 @@ function AboutPage() {
   })
 
   const [intersected, setIntersected] = useState(initialIntersected)
+  const [statsIntersected, setStatsIntersected] = useState(false)
+
   const [timelineHeight, setTimelineHeight] = useState(0)
   const windowSize = useWindowSize()
 
   const interactions = useContext(AnimationContext)
+
 
   useEffect(() => {
     const observer = new IntersectionObserver(entries => {
@@ -213,6 +209,20 @@ function AboutPage() {
       }
     })
 
+    const statsObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          setStatsIntersected(true)
+        }
+      })
+    }, { threshold: 0.2 })
+
+    const statsRef = document.getElementById('stats')
+
+    if (statsRef) {
+      statsObserver.observe(statsRef)
+    }
+
   }, [])
 
   useEffect(() => {
@@ -222,7 +232,28 @@ function AboutPage() {
     }
   }, [windowSize])
 
-  const START_FROM = 500
+  const START_FROM = 2000
+
+  const contributionProps = useSpring({
+    val: statsIntersected ? 615 : 0,
+    from: { val: 0 },
+    config: config.slow,
+    delay: 100
+  })
+
+  const streamsProps = useSpring({
+    val: statsIntersected ? 4200 : 0,
+    from: { val: 0 },
+    config: config.slow,
+    delay: 200
+  })
+
+  const readsProps = useSpring({
+    val: statsIntersected ? 60 : 0,
+    from: { val: 0 },
+    config: config.slow,
+    delay: 300
+  })
 
   const titleStyles = useSpring({
     from: { translateY: -50, opacity: 0 },
@@ -234,7 +265,7 @@ function AboutPage() {
   const objectStyles = useSpring({
     from: { scale: 0, opacity: 0 },
     to: { scale: 1, opacity: 1 },
-    delay: START_FROM + 300,
+    delay: START_FROM + 600,
     config: config.wobbly,
     immediate: interactions.loaded
   });
@@ -242,14 +273,14 @@ function AboutPage() {
   const contentStyles = useSpring({
     from: { opacity: 0 },
     to: { opacity: 1 },
-    delay: START_FROM + 1500,
+    delay: START_FROM + 3000,
     immediate: interactions.loaded
   });
 
   const wordsStlyes = useSpring({
     from: { translateY: -20, opacity: 0 },
     to: { translateY: 0, opacity: 1 },
-    delay: START_FROM + 700,
+    delay: START_FROM + 1500,
     config: config.slow,
     immediate: interactions.loaded
   });
@@ -279,17 +310,28 @@ function AboutPage() {
           </animated.div>
         </>
       </ArticleContainer>
+      <div className="py-4 my-8 bg-base-100">
+        <ArticleContainer classOverrides="flex flex-col p-8 items-center">
+          <h3 className="my-3 text-2xl">My Specialities</h3>
+          <p className="text-center">Here are a few things that I've spent <code>{'hours |> times |> 1000s'}</code> perfecting, and have come  pretty darn good at...</p>
+          <div className="my-8 mt-12 xl:mt-16 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+            {services.map(service => (
+              <Service key={service.id} service={service} />
+            ))}
+          </div>
+        </ArticleContainer>
+      </div>
       <animated.div style={contentStyles}>
         <ArticleContainer classOverrides="flex flex-col items-center w-full gap-x-6 my-8 lg:my-20">
           <h3 className="my-6 text-lg">My Life in Numbers</h3>
-          <div className="mx-auto shadow stats stats-vertical md:stats-horizontal">
+          <div id="stats" className="mx-auto shadow stats stats-vertical md:stats-horizontal">
 
             <div className="stat">
               <div className="stat-figure text-primary">
                 <Terminal classOverride="w-6 h-6 fill-primary" />
               </div>
               <div className="stat-title">Contributions</div>
-              <div className="stat-value">615</div>
+              <animated.div className="stat-value">{contributionProps.val.to(val => Math.floor(val).toLocaleString())}</animated.div>
               <div className="stat-desc">This Year on Github</div>
             </div>
 
@@ -298,7 +340,7 @@ function AboutPage() {
                 <Streaming classOverride="w-8 h-8 fill-primary" />
               </div>
               <div className="stat-title">Monthly Streams</div>
-              <div className="stat-value">4,200</div>
+              <animated.div className="stat-value">{streamsProps.val.to(val => Math.floor(val).toLocaleString())}</animated.div>
               <div className="stat-desc">↗︎ 400 (22%)</div>
             </div>
 
@@ -307,7 +349,7 @@ function AboutPage() {
                 <Reading classOverride="w-8 h-8 fill-primary" />
               </div>
               <div className="stat-title">Total Reads</div>
-              <div className="stat-value">60</div>
+              <animated.div className="stat-value">{readsProps.val.to(val => Math.floor(val).toLocaleString())}</animated.div>
               <div className="stat-desc">of my Blog</div>
             </div>
 
@@ -333,6 +375,16 @@ function AboutPage() {
   }
 }
 
+
+function Service({ service }: { service: Service }): JSX.Element {
+  return (
+    <div className="flex flex-col p-5 rounded-lg dark:bg-offBlack/75 bg-offWhite/75">
+      <img src={service.icon} className="w-12 h-12 mb-4" />
+      <h4 className="my-2 text-xl font-bold">{service.title}</h4>
+      <p>{service.description}</p>
+    </div>
+  )
+}
 
 function DescriptiveWord({ word }: { word: DescriptiveWord }) {
   return (
@@ -371,7 +423,7 @@ function Activity({ milestone, intersected }: { milestone: Activity, intersected
         <div className="flex flex-col">
           <div className="flex flex-col items-center justify-between lg:flex-row">
             <div className="mb-3 text-2xl font-bold">{milestone.title}</div>
-            <div className={`my-4 p-2 rounded text-sm bg-${milestone.label}/25 text-${milestone.label} uppercase`}>{milestone.label}</div>
+            <div className={`my-4 p-2 rounded text-sm bg-${milestone.label}/25 text-${milestone.label} uppercase`} style={{ backgroundColor: `${labelColors[milestone.label]}50`, color: labelColors[milestone.label] }}>{milestone.label}</div>
           </div>
           <div className="text-lg">{milestone.description}</div>
           <div className="flex flex-row justify-between mt-4">
