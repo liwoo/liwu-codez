@@ -9,7 +9,6 @@ import Terminal from "../components/icons/terminal"
 import Streaming from "../components/icons/streaming"
 import Reading from "../components/icons/reading"
 import useWindowSize from "../hooks/use-window-size"
-import WebDev from "../../public/icons/web-dev"
 
 type Label = "personal" | "professional" | "education" | "other"
 
