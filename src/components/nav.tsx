@@ -30,7 +30,7 @@ const menuItems: MenuItem[] = [
   },
   {
     label: "My Work",
-    href: "/portfolio",
+    href: "/work",
   },
   {
     label: "Contact",

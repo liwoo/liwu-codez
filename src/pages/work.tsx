@@ -3,7 +3,7 @@ import { Alignment, Fit } from "rive-react"
 import BackgroundAnimation, { AnimationContext } from "../components/background-animation"
 import Image from "next/image"
 import ArticleContainer from "../components/article-container"
-import { useContext, useEffect, useState } from "react"
+import { CSSProperties, useContext, useEffect, useState } from "react"
 import { animated, config, useSpring } from "@react-spring/web"
 import Terminal from "../components/icons/terminal"
 import Streaming from "../components/icons/streaming"
@@ -11,6 +11,13 @@ import Reading from "../components/icons/reading"
 import useWindowSize from "../hooks/use-window-size"
 
 type Label = "personal" | "professional" | "education" | "other"
+
+interface Skill {
+  id: string
+  name: string
+  icon: string
+  years: number
+}
 
 interface Activity {
   id: string
@@ -47,6 +54,45 @@ interface Service {
   title: string
   description: string
 }
+
+const skills: Skill[] = [
+  {
+    id: "javascript",
+    name: "Javascript",
+    icon: 'icons/typescript.svg',
+    years: 6,
+  },
+  {
+    id: "node-js",
+    name: "NodeJs",
+    icon: 'icons/node.svg',
+    years: 5,
+  },
+  {
+    id: "react-js",
+    name: "ReactJs",
+    icon: 'icons/react.svg',
+    years: 4,
+  },
+  {
+    id: "csharp",
+    name: "C#",
+    icon: 'icons/csharp.svg',
+    years: 3,
+  },
+  {
+    id: "flutter",
+    name: "Flutter",
+    icon: 'icons/typescript.svg',
+    years: 3,
+  },
+  {
+    id: "golang",
+    name: "Golang",
+    icon: 'icons/golang.svg',
+    years: 1,
+  },
+]
 
 const services: Service[] = [
   {
@@ -172,7 +218,12 @@ const milestones: Milestone[] = [
   },
 ]
 
-function AboutPage() {
+export interface Percentage extends CSSProperties {
+  '--value': number;
+  '--size': string;
+}
+
+function WorkPage() {
   const initialMilestones = milestones.filter(milestone => typeof milestone !== 'number').map(milestone => {
     return {
       id: (milestone as Activity).id,
@@ -189,7 +240,16 @@ function AboutPage() {
     }
   })
 
-  const initialIntersected = [...initialMilestones, ...initialServices]
+
+  const initialSkills = skills.map(skill => {
+    return {
+      id: skill.id,
+      intersected: false,
+      touched: 0
+    }
+  })
+
+  const initialIntersected = [...initialMilestones, ...initialServices, ...initialSkills]
 
   const [intersected, setIntersected] = useState(initialIntersected)
   const [statsIntersected, setStatsIntersected] = useState(false)
@@ -223,6 +283,13 @@ function AboutPage() {
       const refService = document.getElementById(service.id)
       if (refService) {
         observer.observe(refService)
+      }
+    })
+
+    skills.forEach(skill => {
+      const refSkill = document.getElementById(skill.id)
+      if (refSkill) {
+        observer.observe(refSkill)
       }
     })
 
@@ -302,97 +369,93 @@ function AboutPage() {
     immediate: interactions.loaded
   });
 
-  return (
-    <div className="container p-4">
-      <ArticleContainer classOverrides="flex xl:px-36 flex-col md:flex-row flex-col-reverse md:flex-row-reverse items-start xl:-mt-16">
-        <>
-          <div className="w-full md:w-2/3">
-            <animated.div style={titleStyles}>
-              <h1 className="text-2xl font-bold leading-tight xl:mt-20 md:text-4xl lg:text-5xl">💬 More About <code>{"<Me />"}</code></h1>
-              <p className="my-4 text-xl">I'm a Christian, Hubby, Daddy, Rapper and Software Engineer from Blantyre, Malawi  🇲🇼 .  I believe that Tech <a href="#">is the fastest route towards generational wealth for underprivileged minorities</a>, and I'm a strong advocate for teaching it to whoever will listen!</p>
-              <p className="my-4 text-sm">Here are a few words others have described me as:</p>
-            </animated.div>
-            <animated.div style={wordsStlyes}>
-              {words.map(word => (
-                <DescriptiveWord key={word.word} word={word} />
-              ))}
-            </animated.div>
-          </div>
-          <animated.div style={objectStyles} className="w-1/2 mx-auto mb-8 -mt-16 md:-mt-0 md:mb-0 md:mx-0 md:w-1/3">
-            <Image width={600} height={700} src="https://res.cloudinary.com/tiyeni/image/upload/v1638831306/dp_new.png" className="rounded-lg" layout="responsive" objectFit="cover" />
-            <div className="hidden my-20 md:block">
-              <blockquote>Success isn't about how much money you make, it's about the difference you make in people's lives </blockquote>
-              <cite>Michelle Obama</cite>
-            </div>
-          </animated.div>
-        </>
-      </ArticleContainer>
-      <div className="py-4 my-8 bg-neutral">
-        <ArticleContainer classOverrides="flex flex-col p-8 items-center">
-          <h3 className="my-3 text-2xl text-offWhite">My Specialities</h3>
-          <p className="text-centeri text-offWhite">Here are a few things that I've spent <code className="text-secondary-content">{'hours |> times |> 1000s'}</code> perfecting, and have come  pretty darn good at...</p>
-          <div className="my-8 mt-12 xl:mt-16 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-            {services.map(service => (
-              <Service key={service.id} intersected={findIntersected(service.id)} service={service} />
-            ))}
-          </div>
-          <button className="my-4 btn btn-lg btn-primary">Request for my resumé</button>
-        </ArticleContainer>
-      </div>
-      <animated.div style={contentStyles}>
-        <ArticleContainer classOverrides="flex flex-col items-center w-full gap-x-6 my-8 lg:my-20">
-          <h3 className="my-6 text-lg">My Life in Numbers</h3>
-          <div id="stats" className="mx-auto shadow stats stats-vertical md:stats-horizontal">
-
-            <div className="stat">
-              <div className="stat-figure text-primary">
-                <Terminal classOverride="w-6 h-6 fill-primary" />
-              </div>
-              <div className="stat-title">Contributions</div>
-              <animated.div className="stat-value">{contributionProps.val.to(val => Math.floor(val).toLocaleString())}</animated.div>
-              <div className="stat-desc">This Year on Github</div>
-            </div>
-
-            <div className="stat">
-              <div className="stat-figure text-primary">
-                <Streaming classOverride="w-8 h-8 fill-primary" />
-              </div>
-              <div className="stat-title">Monthly Streams</div>
-              <animated.div className="stat-value">{streamsProps.val.to(val => Math.floor(val).toLocaleString())}</animated.div>
-              <div className="stat-desc">↗︎ 400 (22%)</div>
-            </div>
-
-            <div className="stat">
-              <div className="stat-figure text-primary">
-                <Reading classOverride="w-8 h-8 fill-primary" />
-              </div>
-              <div className="stat-title">Total Reads</div>
-              <animated.div className="stat-value">{readsProps.val.to(val => Math.floor(val).toLocaleString())}</animated.div>
-              <div className="stat-desc">of my Blog</div>
-            </div>
-
-          </div>
-        </ArticleContainer>
-      </animated.div>
-      <animated.div style={contentStyles} id="timeline">
-        <div className="absolute w-2 rounded-full inset-x-1/2 bg-offWhite dark:bg-offBlack" style={{ height: timelineHeight, zIndex: -10 }} />
-        <ArticleContainer classOverrides="flex flex-col my-12 lg:mb-40">
-          {milestones.map(milestone => {
-            return typeof milestone === 'number'
-              ? <Year title={milestone} key={milestone} />
-              : <Activity milestone={milestone} key={milestone.id} intersected={findIntersected(milestone.id)} />
-          })}
-        </ArticleContainer>
-      </animated.div>
-    </div>
-  )
-
   function findIntersected(id: string) {
     const found = intersected.find(item => item.id === id)
     return found.intersected
   }
+
+  return (
+    <>
+      <div className="container p-4">
+        <ArticleContainer classOverrides="xl:px-36 flex flex-col items-center">
+          <h3 className="my-3 text-2xl">My Magic Toolbox  🛠  </h3>
+          <p className="text-center">I've been coding  professionally for <code>6++</code> years.  I've  worked  with so many different technologies, but below are a few that I've come to particularly enjoy</p>
+          <div className="w-2/3 my-8 lg:mt-16 gap-12 gap-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+            {skills.map((skill, index) => <Skill key={skill.id} index={index} skill={skill} intersected={findIntersected(skill.id)} />)}
+          </div>
+        </ArticleContainer>
+      </div>
+      <div className="bg-neutral">
+        My Clients
+      </div>
+      <div className="container p-4">
+        <animated.div style={contentStyles}>
+          <ArticleContainer classOverrides="flex flex-col items-center w-full gap-x-6 my-8 lg:my-20">
+            <h3 className="my-6 text-lg">My Life in Numbers</h3>
+            <div id="stats" className="mx-auto shadow stats stats-vertical md:stats-horizontal">
+
+              <div className="stat">
+                <div className="stat-figure text-primary">
+                  <Terminal classOverride="w-6 h-6 fill-primary" />
+                </div>
+                <div className="stat-title">Contributions</div>
+                <animated.div className="stat-value">{contributionProps.val.to(val => Math.floor(val).toLocaleString())}</animated.div>
+                <div className="stat-desc">This Year on Github</div>
+              </div>
+
+              <div className="stat">
+                <div className="stat-figure text-primary">
+                  <Streaming classOverride="w-8 h-8 fill-primary" />
+                </div>
+                <div className="stat-title">Monthly Streams</div>
+                <animated.div className="stat-value">{streamsProps.val.to(val => Math.floor(val).toLocaleString())}</animated.div>
+                <div className="stat-desc">↗︎ 400 (22%)</div>
+              </div>
+
+              <div className="stat">
+                <div className="stat-figure text-primary">
+                  <Reading classOverride="w-8 h-8 fill-primary" />
+                </div>
+                <div className="stat-title">Total Reads</div>
+                <animated.div className="stat-value">{readsProps.val.to(val => Math.floor(val).toLocaleString())}</animated.div>
+                <div className="stat-desc">of my Blog</div>
+              </div>
+
+            </div>
+          </ArticleContainer>
+        </animated.div>
+        <animated.div style={contentStyles} id="timeline">
+          <div className="absolute w-2 rounded-full inset-x-1/2 bg-offWhite dark:bg-offBlack" style={{ height: timelineHeight, zIndex: -10 }} />
+          <ArticleContainer classOverrides="flex flex-col my-12 lg:mb-40">
+            {milestones.map(milestone => {
+              return typeof milestone === 'number'
+                ? <Year title={milestone} key={milestone} />
+                : <Activity milestone={milestone} key={milestone.id} intersected={findIntersected(milestone.id)} />
+            })}
+          </ArticleContainer>
+        </animated.div>
+      </div>
+    </>
+  )
 }
 
+function Skill({ skill, intersected, index }: { skill: Skill, intersected: boolean, index: number }) {
+  const percentage = skill.years / 6 * 100
+  const props = useSpring({
+    val: intersected ? percentage : 0,
+    from: { val: 0 },
+    config: config.slow,
+    delay: 100 + index * 200
+  });
+
+  return (
+    <div id={skill.id} className="flex flex-col items-center justify-start mx-auto">
+      <animated.div className="border-4 border-transparent radial-progress text-neutral dark:text-accent bg-base-100" style={{ '--value': props.val as Number, '--size': '8rem' } as Percentage}><img src={skill.icon} className="w-12 h-12" alt={skill.name} /></animated.div>
+      <h3 className="my-2 font-medium text-center uppercase">{skill.name}</h3>
+      <div className="badge">{skill.years} years</div>
+    </div>
+  )
+}
 
 function Service({ service, intersected }: { service: Service, intersected: boolean }): JSX.Element {
   return (
@@ -432,7 +495,7 @@ function Activity({ milestone, intersected }: { milestone: Activity, intersected
   return (
     <div>
       <div className="absolute hidden w-8 h-8 -ml-3 rounded-full lg:block inset-x-1/2 bg-offBlack dark:bg-offWhite" />
-      <div id={milestone.id} className={`flex flex-col ${intersected ? 'translate-y-0' : 'translate-y-64'} transition-all duration-300 items-center w-full md:w-3/4 p-6 mx-auto text-left shadow ${isEven ? 'lg:-ml-8' : 'lg:-mr-8'} lg:w-1/2 lg:flex-row gap-x-6 bg-offWhite dark:bg-offBlack`}>
+      <div id={milestone.id} className={`flex flex-col ${intersected ? 'translate-y-0' : 'translate-y-64'} transition-all duration-300 items-center w-full md:w-3/4 p-6 mx-auto text-left shadow ${isEven ? 'lg:-ml-8' : 'lg:-mr-8'} lg:w-1/2 lg:flex-row gap-x-6 bg-base-100/75`}>
         {milestone.image ?
           <div className="w-full mb-8 lg:w-1/2 lg:mb-0">
             <img className="mx-auto mask mask-squircle" src={milestone.image} />
@@ -461,10 +524,10 @@ export function monthYear(date: Date): string {
   })
 }
 
-export default function About() {
+export default function Work() {
   return (
     <BackgroundAnimation scene="Generic" fit={Fit.FitWidth} alignment={Alignment.TopCenter} absolute={false}>
-      <AboutPage />
+      <WorkPage />
     </BackgroundAnimation>
   )
 }
