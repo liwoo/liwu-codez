@@ -61,6 +61,18 @@ interface Company {
   logo: string
 }
 
+interface Project {
+  id: string
+  title: string
+  description: string
+  tags: string[]
+  previewLink: string
+  sourceCode?: string
+  image?: string
+}
+
+
+
 
 const companies: Company[] = [
   {
@@ -264,11 +276,6 @@ const milestones: Milestone[] = [
   },
 ]
 
-export interface Percentage extends CSSProperties {
-  '--value': SpringValue<number> | number;
-  '--size': string;
-}
-
 function WorkPage() {
   const initialMilestones = milestones.filter(milestone => typeof milestone !== 'number').map(milestone => {
     return {
@@ -298,9 +305,7 @@ function WorkPage() {
   const initialIntersected = [...initialMilestones, ...initialServices, ...initialSkills]
 
   const [intersected, setIntersected] = useState(initialIntersected)
-  const [statsIntersected, setStatsIntersected] = useState(false)
 
-  const [timelineHeight, setTimelineHeight] = useState(0)
   const windowSize = useWindowSize()
 
   const interactions = useContext(AnimationContext)
@@ -366,42 +371,6 @@ function WorkPage() {
 
   const START_FROM = 2000
 
-  const contributionProps = useSpring({
-    val: statsIntersected ? 615 : 0,
-    from: { val: 0 },
-    config: config.slow,
-    delay: 100
-  })
-
-  const streamsProps = useSpring({
-    val: statsIntersected ? 4200 : 0,
-    from: { val: 0 },
-    config: config.slow,
-    delay: 200
-  })
-
-  const readsProps = useSpring({
-    val: statsIntersected ? 60 : 0,
-    from: { val: 0 },
-    config: config.slow,
-    delay: 300
-  })
-
-  const titleStyles = useSpring({
-    from: { translateY: -50, opacity: 0 },
-    to: { translateY: 0, opacity: 1 },
-    delay: START_FROM,
-    immediate: interactions.loaded
-  });
-
-  const objectStyles = useSpring({
-    from: { scale: 0, opacity: 0 },
-    to: { scale: 1, opacity: 1 },
-    delay: START_FROM + 600,
-    config: config.wobbly,
-    immediate: interactions.loaded
-  });
-
   const contentStyles = useSpring({
     from: { opacity: 0 },
     to: { opacity: 1 },
@@ -409,13 +378,6 @@ function WorkPage() {
     immediate: interactions.loaded
   });
 
-  const wordsStlyes = useSpring({
-    from: { translateY: -20, opacity: 0 },
-    to: { translateY: 0, opacity: 1 },
-    delay: START_FROM + 1500,
-    config: config.slow,
-    immediate: interactions.loaded
-  });
 
   function findIntersected(id: string) {
     const found = intersected.find(item => item.id === id)
@@ -427,13 +389,13 @@ function WorkPage() {
       <div className="container p-4">
         <ArticleContainer classOverrides="xl:px-36 flex flex-col items-center">
           <h3 className="my-3 text-2xl">My Magic Toolbox  🛠  </h3>
-          <p className="text-center">I've been coding  professionally for <code>6++</code> years.  I've  worked  with so many different technologies, but below are a few that I've come to particularly enjoy</p>
-          <div className="flex flex-col w-full p-4 my-8 lg:mt-16 lg:w-2/3 gap-y-8 bg-base-100">
+          <p className="text-center lg:w-2/3">I've been coding  professionally for <code>6++</code> years.  I've  worked  with so many different technologies, but below are a few that I've come to particularly enjoy</p>
+          <div style={{ transform: `perspective(1200px) rotateY(0deg)` }} className="flex flex-col w-full p-2 py-8 my-8 rounded-lg md:p-6 shadow-sm lg:mt-16 lg:w-2/3 gap-y-8 bg-gradient-to-bl bg-accent/50 from-base-100">
             {skills.map((skill, index) => <Skill key={skill.id} index={index} skill={skill} intersected={findIntersected(skill.id)} />)}
           </div>
         </ArticleContainer>
       </div>
-      <div className="flex flex-col items-center py-12 my-12 overflow-x-hidden text-offWhite bg-neutral">
+      <div className="flex flex-col items-center px-4 py-12 mt-12 overflow-x-hidden text-offWhite bg-neutral">
         <h3 className="my-3 text-2xl font-bold">In Great Company</h3>
         <p className="text-center">I've been extremely priviledged to do work with these awesome companies over the years</p>
         <div className="relative overflow-hidden" style={{ height: `${logosContainerRef.current?.clientHeight}px` }}>
@@ -450,49 +412,10 @@ function WorkPage() {
         </div>
       </div>
       <div className="container p-4">
-        <animated.div style={contentStyles}>
-          <ArticleContainer classOverrides="flex flex-col items-center w-full gap-x-6 my-8 lg:my-20">
-            <h3 className="my-6 text-lg">My Life in Numbers</h3>
-            <div id="stats" className="mx-auto shadow stats stats-vertical md:stats-horizontal">
-
-              <div className="stat">
-                <div className="stat-figure text-primary">
-                  <Terminal classOverride="w-6 h-6 fill-primary" />
-                </div>
-                <div className="stat-title">Contributions</div>
-                <animated.div className="stat-value">{contributionProps.val.to(val => Math.floor(val).toLocaleString())}</animated.div>
-                <div className="stat-desc">This Year on Github</div>
-              </div>
-
-              <div className="stat">
-                <div className="stat-figure text-primary">
-                  <Streaming classOverride="w-8 h-8 fill-primary" />
-                </div>
-                <div className="stat-title">Monthly Streams</div>
-                <animated.div className="stat-value">{streamsProps.val.to(val => Math.floor(val).toLocaleString())}</animated.div>
-                <div className="stat-desc">↗︎ 400 (22%)</div>
-              </div>
-
-              <div className="stat">
-                <div className="stat-figure text-primary">
-                  <Reading classOverride="w-8 h-8 fill-primary" />
-                </div>
-                <div className="stat-title">Total Reads</div>
-                <animated.div className="stat-value">{readsProps.val.to(val => Math.floor(val).toLocaleString())}</animated.div>
-                <div className="stat-desc">of my Blog</div>
-              </div>
-
-            </div>
-          </ArticleContainer>
-        </animated.div>
         <animated.div style={contentStyles} id="timeline">
-          <div className="absolute w-2 rounded-full inset-x-1/2 bg-offWhite dark:bg-offBlack" style={{ height: timelineHeight, zIndex: -10 }} />
-          <ArticleContainer classOverrides="flex flex-col my-12 lg:mb-40">
-            {milestones.map(milestone => {
-              return typeof milestone === 'number'
-                ? <Year title={milestone} key={milestone} />
-                : <Activity milestone={milestone} key={milestone.id} intersected={findIntersected(milestone.id)} />
-            })}
+          <ArticleContainer classOverrides="flex flex-row my-8">
+            <div className="hidden w-1/3 md:block">Image Here</div>
+            <div className="w-2/3">Work</div>
           </ArticleContainer>
         </animated.div>
       </div>
@@ -503,18 +426,21 @@ function WorkPage() {
 function Skill({ skill, intersected, index }: { skill: Skill, intersected: boolean, index: number }) {
   const percentage = skill.years / 6 * 100
   const props = useSpring({
-    val: intersected ? percentage : 0,
-    from: { val: 0 },
-    config: config.slow,
+    width: intersected ? `${percentage}` : `0%`,
+    from: { width: `0%` },
+    config: config.wobbly,
     delay: 100 + index * 200
   });
 
   return (
-    <div id={skill.id} className="flex flex-col items-center justify-start w-2/3 mx-auto">
-      <animated.div className="h-8 rounded-lg bg-neutral" style={{ width: `${props.val.to(val => `${val}%`)}` }} />
-      <animated.div className="border-4 border-transparent radial-progress text-neutral dark:text-accent bg-base-100" style={{ '--value': props.val, '--size': '8rem' } as Percentage}><img src={skill.icon} className="w-12 h-12" alt={skill.name} /></animated.div>
-      <h3 className="my-2 font-medium text-center uppercase">{skill.name}</h3>
-      <div className="badge">{skill.years} years</div>
+    <div id={skill.id} className="flex flex-row justify-start w-full mx-auto gap-x-4">
+      <div className="w-1/4">
+        <h3 className="my-2 font-medium text-center uppercase">{skill.name}</h3>
+      </div>
+      <div className="flex flex-col items-start w-3/4">
+        <animated.div className="h-8 rounded-lg bg-neutral dark:bg-accent" style={props} />
+        <div className="my-2 badge">{skill.years} year{`${skill.years > 1 ? `s` : ``}`}</div>
+      </div>
     </div>
   )
 }

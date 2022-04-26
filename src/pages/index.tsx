@@ -38,13 +38,13 @@ function Home() {
         onMouseOver={_e => interactions.startInteraction()}
         onMouseLeave={_e => interactions.endInteraction()}>
         <h1 className="my-2 text-2xl font-medium md:my-6">
-          Hi, I'm Jeremiah Chienda
+          Hi, I'm <strong>Jeremiah</strong> Chienda
         </h1>
-        <h2 className="text-2xl leading-tight uppercase dark:text-primary md:text-4xl">
-          I'm a {' '}
-          <strong className="bg-gradient-to-b from-transparent via-transparent to-secondary">
-            software engineer
-          </strong>
+        <h2 className="text-2xl leading-loose uppercase md:leading-tight dark:text-primary md:text-4xl">
+          I'm an {' '}
+          <code className="capitalize">
+            {'Engineer<Software>'}
+          </code>
           <p className="text-base md:text-4xl"> 4rm Blantyre // Malawi </p>
         </h2>
         <p className="hidden p-4 my-12 text-2xl lg:block bg-base-100/95 md:w-2/3 xl:w-3/4">
