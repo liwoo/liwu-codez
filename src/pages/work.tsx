@@ -382,7 +382,7 @@ function WorkPage() {
         </ArticleContainer>
       </div>
       <div className="flex flex-col items-center px-4 py-12 mt-12 overflow-x-hidden text-offWhite bg-neutral">
-        <h3 className="my-3 text-2xl font-bold">In Great Company</h3>
+        <h3 className="my-3 text-2xl font-bold">UR In Great Company</h3>
         <p className="text-center">I've been extremely priviledged to do work with these awesome companies over the years</p>
         <div className="relative overflow-hidden" style={{ height: `${logosContainerRef.current?.clientHeight}px` }}>
           <div ref={logosContainerRef} className="inline-flex p-8 overflow-x-hidden gap-x-12 animate-logos">

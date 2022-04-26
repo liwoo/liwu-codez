@@ -41,7 +41,7 @@ function Home() {
           Hi, I'm <strong>Jeremiah</strong> Chienda
         </h1>
         <h2 className="text-2xl leading-loose uppercase md:leading-tight dark:text-primary md:text-4xl">
-          I'm an {' '}
+          <span className="hidden md:inline">an {' '}</span>
           <code className="capitalize">
             {'Engineer<Software>'}
           </code>
