@@ -4,13 +4,12 @@ import BackgroundAnimation, { AnimationContext } from "../components/background-
 import Image from "next/image"
 import ArticleContainer from "../components/article-container"
 import { CSSProperties, useContext, useEffect, useState } from "react"
-import { animated, config, useSpring } from "@react-spring/web"
+import { animated, config, SpringValue, useSpring } from "@react-spring/web"
 import Terminal from "../components/icons/terminal"
 import Streaming from "../components/icons/streaming"
 import Reading from "../components/icons/reading"
 import useWindowSize from "../hooks/use-window-size"
 
-type Label = "personal" | "professional" | "education" | "other"
 
 interface Skill {
   id: string
@@ -18,6 +17,8 @@ interface Skill {
   icon: string
   years: number
 }
+
+type Label = "personal" | "professional" | "education" | "other"
 
 interface Activity {
   id: string
@@ -219,7 +220,7 @@ const milestones: Milestone[] = [
 ]
 
 export interface Percentage extends CSSProperties {
-  '--value': number;
+  '--value': SpringValue<number> | number;
   '--size': string;
 }
 
@@ -450,7 +451,7 @@ function Skill({ skill, intersected, index }: { skill: Skill, intersected: boole
 
   return (
     <div id={skill.id} className="flex flex-col items-center justify-start mx-auto">
-      <animated.div className="border-4 border-transparent radial-progress text-neutral dark:text-accent bg-base-100" style={{ '--value': props.val as Number, '--size': '8rem' } as Percentage}><img src={skill.icon} className="w-12 h-12" alt={skill.name} /></animated.div>
+      <animated.div className="border-4 border-transparent radial-progress text-neutral dark:text-accent bg-base-100" style={{ '--value': props.val, '--size': '8rem' } as Percentage}><img src={skill.icon} className="w-12 h-12" alt={skill.name} /></animated.div>
       <h3 className="my-2 font-medium text-center uppercase">{skill.name}</h3>
       <div className="badge">{skill.years} years</div>
     </div>
