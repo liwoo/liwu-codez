@@ -71,7 +71,29 @@ interface Project {
   image?: string
 }
 
-
+const projects: Project[] = [
+  {
+    id: "mybucks",
+    title: "Official MyBucks Website",
+    description: "Some cool project I worked on...",
+    tags: ["Website", "ReactJS", "GatsbyJS"],
+    previewLink: "https://mybucksbanking.mw"
+  },
+  {
+    id: "cla",
+    title: "Official MyBucks Website",
+    description: "Some cool project I worked on...",
+    tags: ["Website", "ReactJS", "GatsbyJS"],
+    previewLink: "https://mybucksbanking.mw"
+  },
+  {
+    id: "getalinafe",
+    title: "Official MyBucks Website",
+    description: "Some cool project I worked on...",
+    tags: ["Website", "ReactJS", "GatsbyJS"],
+    previewLink: "https://mybucksbanking.mw"
+  },
+]
 
 
 const companies: Company[] = [
@@ -322,21 +344,6 @@ function WorkPage() {
       })
     })
 
-    milestones.filter(milestone => typeof milestone !== 'number').forEach(milestone => {
-      const refMilestone = document.getElementById((milestone as Activity).id)
-      if (refMilestone) {
-        observer.observe(refMilestone)
-      }
-    })
-
-
-    services.forEach(service => {
-      const refService = document.getElementById(service.id)
-      if (refService) {
-        observer.observe(refService)
-      }
-    })
-
     skills.forEach(skill => {
       const refSkill = document.getElementById(skill.id)
       if (refSkill) {
@@ -344,30 +351,9 @@ function WorkPage() {
       }
     })
 
-    const statsObserver = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          setStatsIntersected(true)
-        }
-      })
-    }, { threshold: 0.2 })
-
-
-
-    const statsRef = document.getElementById('stats')
-
-    if (statsRef) {
-      statsObserver.observe(statsRef)
-    }
 
   }, [])
 
-  useEffect(() => {
-    const timeline = document.getElementById("timeline")
-    if (timeline) {
-      setTimelineHeight(timeline.clientHeight)
-    }
-  }, [windowSize])
 
   const START_FROM = 2000
 
@@ -415,11 +401,27 @@ function WorkPage() {
         <animated.div style={contentStyles} id="timeline">
           <ArticleContainer classOverrides="flex flex-row my-8">
             <div className="hidden w-1/3 md:block">Image Here</div>
-            <div className="w-2/3">Work</div>
+            <div className="w-full md:w-2/3">
+              {projects.map((project, index) => <ProjectTab key={project.id} project={project} index={index} />)}
+            </div>
           </ArticleContainer>
         </animated.div>
       </div>
     </>
+  )
+}
+
+function ProjectTab({ index, project }: { index: number, project: Project }) {
+  return (
+    <div tabIndex={index} className="w-full my-6 border-b collapse collapse-plus">
+      <input type="checkbox" />
+      <div className="text-xl text-3xl font-bold lg:text-4xl xl:text-5xl collapse-title">
+        {`0${index + 1}. ${project.title}`}
+      </div>
+      <div className="collapse-content">
+        <p>{project.description}</p>
+      </div>
+    </div>
   )
 }
 
@@ -470,13 +472,6 @@ function DescriptiveWord({ word }: { word: DescriptiveWord }) {
 }
 
 
-function Year({ title }: { title: number }) {
-  return (
-    <div className="flex flex-col items-center justify-center w-full my-12">
-      <div className="p-3 text-xl rounded bg-accent text-primary">{title}</div>
-    </div>
-  )
-}
 
 function Activity({ milestone, intersected }: { milestone: Activity, intersected: boolean }) {
   const isEven = Number(milestone.id) % 2 === 0
