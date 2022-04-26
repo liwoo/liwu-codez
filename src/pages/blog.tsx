@@ -147,7 +147,7 @@ function BlogPage() {
             </animated.div>
           </div>
           <animated.div style={objectStyles} className="hidden md:w-1/3 lg:w-1/2 md:block">
-            <Image width={600} height={600} src="/img/3d/blog.png" className="border" />
+            <Image width={600} height={600} src="/img/3d/work.png" className="border" />
           </animated.div>
         </>
       </ArticleContainer>

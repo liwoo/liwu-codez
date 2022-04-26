@@ -400,8 +400,10 @@ function WorkPage() {
       <div className="container p-4">
         <animated.div style={contentStyles} id="timeline">
           <ArticleContainer classOverrides="flex flex-row my-8">
-            <div className="hidden w-1/3 md:block">Image Here</div>
-            <div className="w-full md:w-2/3">
+            <div className="hidden lg:w-2/5 lg:block">
+              <Image width={600} height={600} src="/img/3d/blog.png" className="border" />
+            </div>
+            <div className="w-full lg:w-3/5">
               {projects.map((project, index) => <ProjectTab key={project.id} project={project} index={index} />)}
             </div>
           </ArticleContainer>
@@ -419,7 +421,11 @@ function ProjectTab({ index, project }: { index: number, project: Project }) {
         {`0${index + 1}. ${project.title}`}
       </div>
       <div className="collapse-content">
-        <p>{project.description}</p>
+        <div className="border mockup-window bg-base-300">
+          <div className="flex justify-center bg-base-200">
+            <Image width={900} height={450} src="https://res.cloudinary.com/tiyeni/image/upload/v1651013189/Screen_Shot_2022-04-27_at_12.46.16_AM.png" className="border" />
+          </div>
+        </div>
       </div>
     </div>
   )
