@@ -432,7 +432,7 @@ function Activity({ milestone, intersected }: { milestone: Activity, intersected
   return (
     <div>
       <div className="absolute hidden w-8 h-8 -ml-3 rounded-full lg:block inset-x-1/2 bg-offBlack dark:bg-offWhite" />
-      <div id={milestone.id} className={`flex flex-col ${intersected ? 'translate-y-0' : 'translate-y-64'} transition-all duration-300 items-center w-full md:w-3/4 p-6 mx-auto text-left shadow ${isEven ? 'lg:-ml-8' : 'lg:-mr-8'} lg:w-1/2 lg:flex-row gap-x-6 bg-offWhite dark:bg-offBlack`}>
+      <div id={milestone.id} className={`flex flex-col ${intersected ? 'translate-y-0' : 'translate-y-64'} transition-all duration-300 items-center w-full md:w-3/4 p-6 mx-auto text-left shadow ${isEven ? 'lg:-ml-8' : 'lg:-mr-8'} lg:w-1/2 lg:flex-row gap-x-6 bg-offWhite dark:bg-base-100`}>
         {milestone.image ?
           <div className="w-full mb-8 lg:w-1/2 lg:mb-0">
             <img className="mx-auto mask mask-squircle" src={milestone.image} />

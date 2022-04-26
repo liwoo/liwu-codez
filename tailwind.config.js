@@ -22,6 +22,30 @@ module.exports = {
       other: "#70D94D",
     },
     extend: {
+      animation: {
+        logos: 'slide 30s linear infinite',
+        logosMd: 'slideMd 30s linear infinite',
+        logosLg: 'slideLg 20s linear infinite',
+        logosXl: 'slideXl 20s linear infinite',
+      },
+      keyframes: {
+        slide: {
+          from: {transform: `translateX(0%)`},
+          to: {transform: `translateX(-100%)`}
+        },
+        slideMd: {
+          from: {transform: `translateX(100%) translateY(-100%)`},
+          to: {transform: `translateX(0%) translateY(-100%)`}
+        },
+        slideLg: {
+          from: {transform: `translateX(0%)`},
+          to: {transform: `translateX(-50%)`}
+        },
+        slideXl: {
+          from: {transform: `translateX(0%)`},
+          to: {transform: `translateX(-25%)`}
+        },
+      }
     },
     /* Most of the time we customize the font-sizes,
      so we added the Tailwind default values here for

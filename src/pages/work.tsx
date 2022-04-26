@@ -3,7 +3,7 @@ import { Alignment, Fit } from "rive-react"
 import BackgroundAnimation, { AnimationContext } from "../components/background-animation"
 import Image from "next/image"
 import ArticleContainer from "../components/article-container"
-import { CSSProperties, useContext, useEffect, useState } from "react"
+import { CSSProperties, useContext, useEffect, useRef, useState } from "react"
 import { animated, config, SpringValue, useSpring } from "@react-spring/web"
 import Terminal from "../components/icons/terminal"
 import Streaming from "../components/icons/streaming"
@@ -55,6 +55,59 @@ interface Service {
   title: string
   description: string
 }
+
+interface Company {
+  id: string
+  logo: string
+}
+
+
+const companies: Company[] = [
+  {
+    id: "times",
+    logo: "logos/times.png",
+  },
+  {
+    id: "undp",
+    logo: "logos/undp.png",
+  },
+  {
+    id: "tnm",
+    logo: "logos/tnm.png",
+  },
+  {
+    id: "nbs",
+    logo: "logos/nbs.png",
+  },
+  {
+    id: "oaf",
+    logo: "logos/oaf.png",
+  },
+  {
+    id: "bmg",
+    logo: "logos/bmg.png",
+  },
+  {
+    id: "ugi",
+    logo: "logos/tnm.png",
+  },
+  {
+    id: "mtl",
+    logo: "logos/undp.png",
+  },
+  {
+    id: "mybucks",
+    logo: "logos/tnm.png",
+  },
+  {
+    id: "placeholder1",
+    logo: "logos/undp.png",
+  },
+  {
+    id: "placeholder2",
+    logo: "logos/tnm.png",
+  },
+]
 
 const skills: Skill[] = [
   {
@@ -258,8 +311,10 @@ function WorkPage() {
   const [timelineHeight, setTimelineHeight] = useState(0)
   const windowSize = useWindowSize()
 
-  const interactions = useContext(AnimationContext)
+  const [logosTranslateX, setLogosTranslateX] = useState(0)
 
+  const interactions = useContext(AnimationContext)
+  const logosContainerRef = useRef(null)
 
   useEffect(() => {
     const observer = new IntersectionObserver(entries => {
@@ -302,11 +357,31 @@ function WorkPage() {
       })
     }, { threshold: 0.2 })
 
+
+
     const statsRef = document.getElementById('stats')
 
     if (statsRef) {
       statsObserver.observe(statsRef)
     }
+
+    const logosObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) {
+          setLogosTranslateX(200)
+        }
+      })
+    })
+
+    const logosRef = document.getElementById('logos')
+
+    if (logosRef) {
+      logosObserver.observe(logosRef)
+    }
+
+    setInterval(() => {
+      setLogosTranslateX(val => val - 1)
+    }, 100);
 
   }, [])
 
@@ -381,13 +456,26 @@ function WorkPage() {
         <ArticleContainer classOverrides="xl:px-36 flex flex-col items-center">
           <h3 className="my-3 text-2xl">My Magic Toolbox  🛠  </h3>
           <p className="text-center">I've been coding  professionally for <code>6++</code> years.  I've  worked  with so many different technologies, but below are a few that I've come to particularly enjoy</p>
-          <div className="w-2/3 my-8 lg:mt-16 gap-12 gap-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+          <div className="w-2/3 my-8 lg:mt-16 gap-12 gap-16 grid grid-cols-2 lg:grid-cols-3">
             {skills.map((skill, index) => <Skill key={skill.id} index={index} skill={skill} intersected={findIntersected(skill.id)} />)}
           </div>
         </ArticleContainer>
       </div>
-      <div className="bg-neutral">
-        My Clients
+      <div className="flex flex-col items-center py-12 my-12 overflow-x-hidden text-offWhite bg-neutral">
+        <h3 className="my-3 text-2xl font-bold">In Great Company</h3>
+        <p className="text-center">I've been extremely priviledged to do work with these awesome companies over the years</p>
+        <div className="relative overflow-hidden" style={{ height: `${logosContainerRef.current?.clientHeight}px` }}>
+          <div ref={logosContainerRef} className="inline-flex p-8 overflow-x-hidden gap-x-12 animate-logos">
+            {companies.map(company =>
+              <div id={company.id} className="w-40 h-20 overflow-none"><img src={company.logo} alt={company.id} /></div>
+            )}
+          </div>
+          <div className="inline-flex p-8 overflow-x-hidden gap-x-12 animate-logosMd">
+            {companies.map(company =>
+              <div id={company.id} className="w-40 h-20 overflow-none"><img src={company.logo} alt={company.id} /></div>
+            )}
+          </div>
+        </div>
       </div>
       <div className="container p-4">
         <animated.div style={contentStyles}>
