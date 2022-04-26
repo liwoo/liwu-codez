@@ -456,7 +456,7 @@ function WorkPage() {
         <ArticleContainer classOverrides="xl:px-36 flex flex-col items-center">
           <h3 className="my-3 text-2xl">My Magic Toolbox  🛠  </h3>
           <p className="text-center">I've been coding  professionally for <code>6++</code> years.  I've  worked  with so many different technologies, but below are a few that I've come to particularly enjoy</p>
-          <div className="w-2/3 my-8 lg:mt-16 gap-12 gap-16 grid grid-cols-2 lg:grid-cols-3">
+          <div className="w-full my-8 lg:mt-16 lg:w-2/3 gap-8 lg:gap-16 grid grid-cols-2 lg:grid-cols-3">
             {skills.map((skill, index) => <Skill key={skill.id} index={index} skill={skill} intersected={findIntersected(skill.id)} />)}
           </div>
         </ArticleContainer>
