@@ -76,8 +76,8 @@ const companies: Company[] = [
     logo: "logos/tnm.png",
   },
   {
-    id: "nbs",
-    logo: "logos/nbs.png",
+    id: "mybucks",
+    logo: "logos/mybucks.png",
   },
   {
     id: "oaf",
@@ -88,24 +88,16 @@ const companies: Company[] = [
     logo: "logos/bmg.png",
   },
   {
+    id: "nbs",
+    logo: "logos/nbs.png",
+  },
+  {
     id: "ugi",
-    logo: "logos/tnm.png",
+    logo: "logos/ugi.png",
   },
   {
     id: "mtl",
-    logo: "logos/undp.png",
-  },
-  {
-    id: "mybucks",
-    logo: "logos/tnm.png",
-  },
-  {
-    id: "placeholder1",
-    logo: "logos/undp.png",
-  },
-  {
-    id: "placeholder2",
-    logo: "logos/tnm.png",
+    logo: "logos/mtl.png",
   },
 ]
 
@@ -311,8 +303,6 @@ function WorkPage() {
   const [timelineHeight, setTimelineHeight] = useState(0)
   const windowSize = useWindowSize()
 
-  const [logosTranslateX, setLogosTranslateX] = useState(0)
-
   const interactions = useContext(AnimationContext)
   const logosContainerRef = useRef(null)
 
@@ -364,24 +354,6 @@ function WorkPage() {
     if (statsRef) {
       statsObserver.observe(statsRef)
     }
-
-    const logosObserver = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (!entry.isIntersecting) {
-          setLogosTranslateX(200)
-        }
-      })
-    })
-
-    const logosRef = document.getElementById('logos')
-
-    if (logosRef) {
-      logosObserver.observe(logosRef)
-    }
-
-    setInterval(() => {
-      setLogosTranslateX(val => val - 1)
-    }, 100);
 
   }, [])
 
@@ -456,7 +428,7 @@ function WorkPage() {
         <ArticleContainer classOverrides="xl:px-36 flex flex-col items-center">
           <h3 className="my-3 text-2xl">My Magic Toolbox  🛠  </h3>
           <p className="text-center">I've been coding  professionally for <code>6++</code> years.  I've  worked  with so many different technologies, but below are a few that I've come to particularly enjoy</p>
-          <div className="w-full my-8 lg:mt-16 lg:w-2/3 gap-8 lg:gap-16 grid grid-cols-2 lg:grid-cols-3">
+          <div className="flex flex-col w-full p-4 my-8 lg:mt-16 lg:w-2/3 gap-y-8 bg-base-100">
             {skills.map((skill, index) => <Skill key={skill.id} index={index} skill={skill} intersected={findIntersected(skill.id)} />)}
           </div>
         </ArticleContainer>
@@ -538,7 +510,8 @@ function Skill({ skill, intersected, index }: { skill: Skill, intersected: boole
   });
 
   return (
-    <div id={skill.id} className="flex flex-col items-center justify-start mx-auto">
+    <div id={skill.id} className="flex flex-col items-center justify-start w-2/3 mx-auto">
+      <animated.div className="h-8 rounded-lg bg-neutral" style={{ width: `${props.val.to(val => `${val}%`)}` }} />
       <animated.div className="border-4 border-transparent radial-progress text-neutral dark:text-accent bg-base-100" style={{ '--value': props.val, '--size': '8rem' } as Percentage}><img src={skill.icon} className="w-12 h-12" alt={skill.name} /></animated.div>
       <h3 className="my-2 font-medium text-center uppercase">{skill.name}</h3>
       <div className="badge">{skill.years} years</div>

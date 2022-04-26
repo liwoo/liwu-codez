@@ -22,6 +22,9 @@ module.exports = {
       other: "#70D94D",
     },
     extend: {
+      fontFamily: {
+        SpaceGrotesk: ["Space Grotesk", "sans-serif"] 
+      },
       animation: {
         logos: 'slide 30s linear infinite',
         logosMd: 'slideMd 30s linear infinite',
