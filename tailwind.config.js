@@ -22,6 +22,9 @@ module.exports = {
       other: "#70D94D",
     },
     extend: {
+      screens: {
+        "xs": "390px"
+      },
       fontFamily: {
         SpaceGrotesk: ["Space Grotesk", "sans-serif"] 
       },
