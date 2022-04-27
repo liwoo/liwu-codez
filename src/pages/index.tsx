@@ -1,4 +1,5 @@
 import { animated, useSpring } from "@react-spring/web"
+import { useRouter } from "next/router"
 import { useContext } from "react"
 import BackgroundAnimation, { AnimationContext } from "../components/background-animation"
 
@@ -29,6 +30,15 @@ function Home() {
     delay: START_FROM + 2500
   });
 
+  const router = useRouter()
+
+  function changeRoute(route: string) {
+    interactions.exitInteraction()
+    setTimeout(() => {
+      router.push(route)
+    }, 1500)
+  }
+
   return (
     <div className="container flex flex-col justify-start h-screen md:justify-center">
       <animated.div style={subtitleStyles} className="absolute h-12 text-xl text-center inset-1/4 top-16 lg:top-64"> <h1>Somewhere in Limbe, Blantyre...</h1> </animated.div>
@@ -56,8 +66,8 @@ function Home() {
           <a> writing Software that improves peoples lives. </a>
         </p>
         <div className="flex my-4 gap-x-2 lg:gap-x-4">
-          <animated.div style={button1Styles}><button className="btn btn-primary md:btn-lg"> Get in touch </button></animated.div>
-          <animated.div style={button2Styles}><button className="btn btn-secondary md:btn-lg">View my work</button></animated.div>
+          <animated.div style={button1Styles}><button onClick={_e => changeRoute('/contact')} className="btn btn-primary md:btn-lg"> Get in touch </button></animated.div>
+          <animated.div style={button2Styles}><button onClick={_e => changeRoute('/work')} className="btn btn-secondary md:btn-lg">View my work</button></animated.div>
         </div>
       </animated.div>
     </div>

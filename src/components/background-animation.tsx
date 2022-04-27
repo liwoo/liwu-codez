@@ -17,6 +17,7 @@ interface Props {
 interface AnimationContextProps {
   startInteraction: () => void
   endInteraction: () => void
+  exitInteraction: () => void
   loaded: boolean
 }
 
@@ -46,6 +47,7 @@ export default function BackgroundAnimation(props: Props): JSX.Element {
   });
 
   const interaction = useStateMachineInput(rive, "State machine", "interact")
+  const exit = useStateMachineInput(rive, "State machine", "exit")
   const changeTheme = useStateMachineInput(rive, "State machine", "switch")
 
   useEffect(() => {
@@ -82,12 +84,17 @@ export default function BackgroundAnimation(props: Props): JSX.Element {
       interaction.value = value
     }
   }
-
+  function triggerExit() {
+    if (rive) {
+      exit && exit.fire()
+    }
+  }
 
   return (
     <AnimationContext.Provider value={{
       startInteraction: () => triggerInteraction(true),
       endInteraction: () => triggerInteraction(false),
+      exitInteraction: () => triggerExit(),
       loaded: loaded
     }}>
       <div style={{ position: "relative" }} className={`${!loaded ? 'opacity-0' : 'opacity-1'} transition-all min-h-screen bg-accent/25 duration-500`}>
