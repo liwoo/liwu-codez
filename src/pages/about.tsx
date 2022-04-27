@@ -330,7 +330,7 @@ function AboutPage() {
       <div className="py-4 my-8 bg-neutral">
         <ArticleContainer classOverrides="flex flex-col p-8 items-center">
           <h3 className="my-3 text-2xl text-offWhite">My Specialities</h3>
-          <p className="text-centeri text-offWhite">Here are a few things that I've spent <code className="text-secondary-content">{'hours |> times |> 1000s'}</code> perfecting, and have come  pretty darn good at...</p>
+          <p className="text-center text-offWhite">Here are a few things that I've spent <code className="text-secondary-content">{'hours |> times |> 1000s'}</code> perfecting, and have come  pretty darn good at...</p>
           <div className="my-8 mt-12 xl:mt-16 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
             {services.map(service => (
               <Service key={service.id} intersected={findIntersected(service.id)} service={service} />
@@ -374,7 +374,7 @@ function AboutPage() {
           </div>
         </ArticleContainer>
       </animated.div>
-      <animated.div style={contentStyles} id="timeline">
+      <animated.div id="timeline">
         <div className="absolute w-2 rounded-full inset-x-1/2 bg-offWhite dark:bg-offBlack" style={{ height: timelineHeight, zIndex: -10 }} />
         <ArticleContainer classOverrides="flex flex-col my-12 lg:mb-40">
           {milestones.map(milestone => {
@@ -429,10 +429,17 @@ function Year({ title }: { title: number }) {
 
 function Activity({ milestone, intersected }: { milestone: Activity, intersected: boolean }) {
   const isEven = Number(milestone.id) % 2 === 0
+
+  const props = useSpring({
+    to: { transform: `perspective(200px) rotateX(0deg) scale(0.9)`, },
+    from: { transform: intersected ? `perspective(1200px) rotateX(60deg) scale(0)` : `perspective(200px) rotateX(0deg) scale(0.9)` },
+    delay: 100,
+  })
+
   return (
-    <div>
+    <div className="w-full overflow-hidden">
       <div className="absolute hidden w-8 h-8 -ml-3 rounded-full lg:block inset-x-1/2 bg-offBlack dark:bg-offWhite" />
-      <div id={milestone.id} className={`flex flex-col ${intersected ? 'translate-y-0' : 'translate-y-64'} transition-all duration-300 items-center w-full md:w-3/4 p-6 mx-auto text-left shadow ${isEven ? 'lg:-ml-8' : 'lg:-mr-8'} lg:w-1/2 lg:flex-row gap-x-6 bg-offWhite dark:bg-base-100`}>
+      <animated.div style={props} id={milestone.id} className={`overflow-x-hidden flex flex-col transition-all duration-300 w-full items-center w-full md:w-3/4 p-6 mx-auto text-left shadow ${isEven ? 'lg:-ml-8' : 'lg:-mr-8'} lg:w-1/2 lg:flex-row gap-x-6 bg-offWhite dark:bg-base-100`}>
         {milestone.image ?
           <div className="w-full mb-8 lg:w-1/2 lg:mb-0">
             <img className="mx-auto mask mask-squircle" src={milestone.image} />
@@ -449,7 +456,7 @@ function Activity({ milestone, intersected }: { milestone: Activity, intersected
             <p>&#9778; {`${monthYear(milestone.startDate)} ${milestone.showRange ? ` - ${monthYear(milestone.endDate)}` : ''}`}</p>
           </div>
         </div>
-      </div>
+      </animated.div>
     </div>
   )
 }

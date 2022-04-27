@@ -174,8 +174,15 @@ function BlogPage() {
 }
 
 function Article({ article, intersected }: { article: Article, intersected: boolean }): JSX.Element {
+
+  const props = useSpring({
+    to: { transform: `translateY(0%)`, },
+    from: { transform: intersected ? `translateY(20%)` : `translateY(0%)` },
+    delay: 300,
+  })
+
   return (
-    <div id={article.id} className={`w-full ${intersected ? 'translate-y-0 opacity-100' : 'translate-y-32 opacity-25'} transition-all hover:skew-y-1 transition-transform duration-500 delay-600 hover:text-primary shadow-sm hover:shadow-lg card bg-base-100`}>
+    <animated.div style={props} id={article.id} className={`w-full transition-all transition-transform duration-500 delay-600 hover:text-primary shadow-sm hover:shadow-lg card bg-base-100`}>
       <figure><img src={article.image} className="w-full" alt="Shoes" /></figure>
       <div className="card-body">
         <h2 className="card-title">
@@ -187,7 +194,7 @@ function Article({ article, intersected }: { article: Article, intersected: bool
           <div className="badge badge-outline">Products</div>
         </div>
       </div>
-    </div>
+    </animated.div>
   )
 }
 
