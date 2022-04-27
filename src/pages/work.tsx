@@ -61,6 +61,13 @@ interface Company {
   logo: string
 }
 
+
+interface ProjectMeta {
+  role: string
+  months: number
+  client: string
+}
+
 interface Project {
   id: string
   title: string
@@ -69,29 +76,45 @@ interface Project {
   previewLink: string
   sourceCode?: string
   image?: string
+  metadata: ProjectMeta
 }
 
 const projects: Project[] = [
   {
     id: "mybucks",
     title: "Official MyBucks Website",
-    description: "Some cool project I worked on...",
+    description: "Official website of MyBucks Banking Corporation. \nI designed the entire site from scratch in Sketch while collaborating with marketing team. \nThe site was coded in React and GatsbyJS powered by a custom-build CMS in Strapi, deployed with Netlify!",
     tags: ["Website", "ReactJS", "GatsbyJS"],
-    previewLink: "https://mybucksbanking.mw"
+    previewLink: "https://mybucksbanking.mw",
+    metadata: {
+      role: "Designer & Developer",
+      months: 8,
+      client: "MyBucks Bank"
+    }
   },
   {
     id: "cla",
     title: "Official MyBucks Website",
     description: "Some cool project I worked on...",
     tags: ["Website", "ReactJS", "GatsbyJS"],
-    previewLink: "https://mybucksbanking.mw"
+    previewLink: "https://mybucksbanking.mw",
+    metadata: {
+      role: "Designer & Developer",
+      months: 8,
+      client: "MyBucks Bank"
+    }
   },
   {
     id: "getalinafe",
     title: "Official MyBucks Website",
     description: "Some cool project I worked on...",
     tags: ["Website", "ReactJS", "GatsbyJS"],
-    previewLink: "https://mybucksbanking.mw"
+    previewLink: "https://mybucksbanking.mw",
+    metadata: {
+      role: "Designer & Developer",
+      months: 8,
+      client: "MyBucks Bank"
+    }
   },
 ]
 
@@ -213,28 +236,6 @@ const services: Service[] = [
   },
 ]
 
-const words: DescriptiveWord[] = [
-  {
-    word: "Opinionated 🙈",
-    description: "They say I'm VERY Opinionated: I'm not afraid of standing up for my point of view, even if goes agains the status quo",
-    emoji: "‼️",
-  },
-  {
-    word: "Wise",
-    description: "\"He is a careful thinker who thinks things through and never makes rash decisions. He values rationality, intellectual strength and independence.\"",
-    emoji: "🤔",
-  },
-  {
-    word: "Down to Earth",
-    description: "My brother told me that I was down to earth, which means that no matter who I’m talking to, I try to connect with him or her. It’s a great compliment.",
-    emoji: "🌍",
-  },
-  {
-    word: "Creative",
-    description: "\"As a leader, he fosters creativity and innovation. Combining these qualities with a passion for detail, Liwu is a powerhouse of innovation.\"",
-    emoji: "🪄",
-  },
-]
 
 //list of milestones
 const milestones: Milestone[] = [
@@ -328,7 +329,6 @@ function WorkPage() {
 
   const [intersected, setIntersected] = useState(initialIntersected)
 
-  const windowSize = useWindowSize()
 
   const interactions = useContext(AnimationContext)
   const logosContainerRef = useRef(null)
@@ -398,7 +398,7 @@ function WorkPage() {
         </div>
       </div>
       <div className="container p-4">
-        <animated.div style={contentStyles} id="timeline">
+        <animated.div id="timeline">
           <ArticleContainer classOverrides="flex flex-row my-8">
             <div className="hidden lg:w-2/5 lg:block">
               <Image width={600} height={600} src="/img/3d/blog.png" className="border" />
@@ -421,12 +421,36 @@ function ProjectTab({ index, project }: { index: number, project: Project }) {
         {`0${index + 1}. ${project.title}`}
       </div>
       <div className="collapse-content">
-        <div className="border mockup-window bg-base-300">
+        <div className="hover:shadow-lg transition-all mockup-window bg-base-300">
           <div className="flex justify-center bg-base-200">
             <Image width={900} height={450} src="https://res.cloudinary.com/tiyeni/image/upload/v1651013189/Screen_Shot_2022-04-27_at_12.46.16_AM.png" className="border" />
           </div>
         </div>
+        <div className="flex justify-center w-full my-4 gap-x-3">
+          <button className="btn btn-primary">View Live Link</button>
+          <button className="btn" disabled={project.sourceCode === undefined}>View Source Code</button>
+        </div>
+        <div className="flex flex-col-reverse my-8 md:gap-x-6 gap-y-8 md:gap-y-0 md:flex-row">
+          <div className="w-full md:w-1/2">{project.description.split('\n').map(par => <p className="my-3 text-lg">{par}</p>)}</div>
+          <div className="flex flex-col w-full gap-y-3 md:w-1/2">
+            <div>
+              {Object.entries(project.metadata).map(entry => <Metafield title={entry[0]} description={entry[1]} />)}
+            </div>
+            <div className="flex gap-x-3">
+              {project.tags.map(tag => <span className="badge">{tag}</span>)}
+            </div>
+          </div>
+        </div>
       </div>
+    </div>
+  )
+}
+
+function Metafield({ title, description }: { title: string, description: string }) {
+  return (
+    <div className="flex flex-row justify-between py-3 my-1 uppercase border-b border-dashed">
+      <h4 className="font-semibold">{title}</h4>
+      <h5>{description}</h5>
     </div>
   )
 }
@@ -462,21 +486,6 @@ function Service({ service, intersected }: { service: Service, intersected: bool
     </div>
   )
 }
-
-function DescriptiveWord({ word }: { word: DescriptiveWord }) {
-  return (
-    <div className="flex items-start justify-center my-8 gap-x-8">
-      <div className="p-4 text-2xl rounded-lg shadow bg-accent">
-        {word.emoji}
-      </div>
-      <div>
-        <h2 className="mb-3 text-xl font-bold capitalize">{word.word}</h2>
-        <p className="">{word.description}</p>
-      </div>
-    </div>
-  )
-}
-
 
 
 function Activity({ milestone, intersected }: { milestone: Activity, intersected: boolean }) {
