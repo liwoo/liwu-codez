@@ -9,6 +9,8 @@ import Terminal from "../components/icons/terminal"
 import Streaming from "../components/icons/streaming"
 import Reading from "../components/icons/reading"
 import useWindowSize from "../hooks/use-window-size"
+import { useTheme } from "next-themes"
+import Link from "next/link"
 
 type Label = "personal" | "professional" | "education" | "other"
 
@@ -53,37 +55,37 @@ const services: Service[] = [
     id: "web",
     icon: "icons/web-dev.svg",
     title: "Websites and WebApp Development",
-    description: "I use the terminal to manage my projects and manage my time.",
+    description: "I build world class websites and web applications using industry standard technologies.",
   },
   {
     id: "mobile",
     icon: "icons/smartphone.svg",
     title: "Mobile App Development",
-    description: "I stream a lot of things, mostly music and games.",
+    description: "I specialize in Cross-Platform Mobile App Development using Flutter.",
   },
   {
     id: "api",
     icon: "icons/api.svg",
     title: "API Design and Development",
-    description: "I read a lot of books and articles.",
+    description: "RESTful API's, ProtoBufs and GraphQL are my specialty.",
   },
   {
     id: "speak",
     icon: "icons/hoodie.svg",
     title: "Speaking & Technical Writing",
-    description: "I read a lot of books and articles.",
+    description: "I will speak at your event, or write technical articles for your publications.",
   },
   {
     id: "ui",
     icon: "icons/responsive.svg",
     title: "UX/UI Design",
-    description: "I stream a lot of things, mostly music and games.",
+    description: "Sometimes I will whip up Figma or Sketch to build High Fidelity prototypes.",
   },
   {
     id: "web3",
     icon: "icons/smart-contracts.svg",
     title: "Smart Contract Development",
-    description: "I read a lot of books and articles.",
+    description: "Recently, I've been dabbling with Solidity and Anchor",
   },
 ]
 
@@ -91,7 +93,7 @@ const words: DescriptiveWord[] = [
   {
     word: "Opinionated 🙈",
     description: "They say I'm VERY Opinionated: I'm not afraid of standing up for my point of view, even if goes agains the status quo",
-    emoji: "‼️",
+    emoji: "💬",
   },
   {
     word: "Wise",
@@ -118,8 +120,8 @@ const milestones: Milestone[] = [
     title: "👶  Born",
     description: "Born in a small picturesque village in the south of Malawi called Thyolo",
     label: "personal",
-    startDate: new Date(1990, 0, 1),
-    endDate: new Date(1990, 0, 1),
+    startDate: new Date(1990, 4, 9),
+    endDate: new Date(1990, 4, 9),
     location: "Thyolo, Malawi",
     showRange: false,
   },
@@ -129,17 +131,38 @@ const milestones: Milestone[] = [
     title: "I'm on TV",
     description: "I made my first appearance as a Sports Anchor on TV to cover the 2006 World Cup",
     label: "personal",
-    startDate: new Date(2006, 6, 1),
-    endDate: new Date(2006, 6, 1),
+    startDate: new Date(2006, 5, 1),
+    endDate: new Date(2006, 5, 1),
+    location: "Blantyre, Malawi",
+    showRange: false,
+  },
+  {
+    id: "3",
+    title: "I am Jason Bourne... Again",
+    description: "Began an life-long adventurous journey as Born Again Christian: For me to Live is Christ and to die is Gain",
+    label: "personal",
+    startDate: new Date(2006, 11, 31),
+    endDate: new Date(2006, 11, 31),
+    location: "Blantyre, Malawi",
+    showRange: false,
+  },
+  2007,
+  {
+    id: "4",
+    title: "First Computer Program",
+    description: "I wrote my first piece of code in Turbo C++ thanks to a friend of my mum's and immediately found my calling!",
+    label: "personal",
+    startDate: new Date(2007, 1, 1),
+    endDate: new Date(2007, 1, 1),
     location: "Blantyre, Malawi",
     showRange: false,
   },
   2011,
   {
-    id: "3",
-    title: "🎓  Graduated",
+    id: "5",
+    title: "Mama we made it 🥳",
     description: "Graduated from the University of Malawi, The Polytechnic",
-    image: "https://images.unsplash.com/photo-1518791841217-8f162f1e1131?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=80",
+    //need to find graduation picture
     label: "education",
     startDate: new Date("2007-07-01"),
     endDate: new Date("2012-07-01"),
@@ -148,10 +171,21 @@ const milestones: Milestone[] = [
   },
   2014,
   {
-    id: "4",
+    id: "6",
+    title: "Let's Disrupt Tourism",
+    description: "Founded my first startup, tiyeni.app, to disrupt tourism in Malawi. But that's a story for another day",
+    image: "https://res.cloudinary.com/tiyeni/image/upload/v1651273860/tiyeni2.jpg",
+    label: "other",
+    startDate: new Date("2016-04-01"),
+    endDate: new Date("2016-04-01"),
+    location: "Kyoto, Japan",
+    showRange: false,
+  },
+  {
+    id: "7",
     title: "🎓🎓  Graduated, Again!",
     description: "Completed my Masters in Computer Science from Doshisha University, Japan",
-    image: "https://images.unsplash.com/photo-1518791841217-8f162f1e1131?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=80",
+    image: "https://res.cloudinary.com/tiyeni/image/upload/v1651273383/graduation.jpg",
     label: "education",
     startDate: new Date("2014-07-01"),
     endDate: new Date("2017-05-01"),
@@ -160,13 +194,25 @@ const milestones: Milestone[] = [
   },
   2017,
   {
-    id: "5",
+    id: "8",
     title: "Wedding Bells 💒",
-    description: "Married my College sweet❤️, before moving to Lilongwe",
-    image: "https://images.unsplash.com/photo-1518791841217-8f162f1e1131?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=80",
+    description: "Married my College sweet❤️, and begun our new life in Lilongwe",
+    image: "https://res.cloudinary.com/tiyeni/image/upload/v1651274000/wedding.jpg",
     label: "personal",
     startDate: new Date("2017-09-02"),
     endDate: new Date("2017-09-02"),
+    location: "Blantyre, Malawi",
+    showRange: false,
+  },
+  2019,
+  {
+    id: "9",
+    title: "Making (r)Apps",
+    description: "Released my acclaimed solo Album, getalinafe.com...",
+    image: "https://res.cloudinary.com/tiyeni/image/upload/v1651274165/rapping.jpg",
+    label: "personal",
+    startDate: new Date("2019-09-02"),
+    endDate: new Date("2019-09-02"),
     location: "Blantyre, Malawi",
     showRange: false,
   },
@@ -310,7 +356,7 @@ function AboutPage() {
             <animated.div style={titleStyles}>
               <h1 className="text-2xl font-bold leading-tight xl:mt-20 md:text-4xl lg:text-5xl">💬 More About <code>{"<Me />"}</code></h1>
               <p className="my-4 text-xl">I'm a Christian, Hubby, Daddy, Rapper and Software Engineer from Blantyre, Malawi  🇲🇼 .  I believe that Tech <a href="#">is the fastest route towards generational wealth for underprivileged minorities</a>, and I'm a strong advocate for teaching it to whoever will listen!</p>
-              <p className="my-4 text-sm">Here are a few words others have described me as:</p>
+              <p className="my-4 text-sm">I asked a few of my mates to describe me in 4 words, and here's what they came up with:</p>
             </animated.div>
             <animated.div style={wordsStlyes}>
               {words.map(word => (
@@ -336,7 +382,7 @@ function AboutPage() {
               <Service key={service.id} intersected={findIntersected(service.id)} service={service} />
             ))}
           </div>
-          <button className="my-4 btn btn-lg btn-primary">Request for my resumé</button>
+          <Link href="/contact"><button className="my-4 btn btn-lg btn-primary">Get in Touch</button></Link>
         </ArticleContainer>
       </div>
       <animated.div style={contentStyles}>
@@ -429,7 +475,7 @@ function Year({ title }: { title: number }) {
 
 function Activity({ milestone, intersected }: { milestone: Activity, intersected: boolean }) {
   const isEven = Number(milestone.id) % 2 === 0
-
+  const theme = useTheme()
   const props = useSpring({
     to: { transform: `perspective(200px) rotateX(0deg) scale(0.9)`, },
     from: { transform: intersected ? `perspective(1200px) rotateX(60deg) scale(0)` : `perspective(200px) rotateX(0deg) scale(0.9)` },
@@ -448,7 +494,7 @@ function Activity({ milestone, intersected }: { milestone: Activity, intersected
         <div className="flex flex-col">
           <div className="flex flex-col items-center justify-between lg:flex-row">
             <div className="mb-3 text-2xl font-bold">{milestone.title}</div>
-            <div className={`my-4 p-2 rounded text-sm bg-${milestone.label}/25 text-${milestone.label} uppercase`} style={{ backgroundColor: `${labelColors[milestone.label]}50`, color: labelColors[milestone.label] }}>{milestone.label}</div>
+            <div className={`my-4 p-2 rounded text-sm bg-${milestone.label}/25 text-${milestone.label} uppercase`} style={{ backgroundColor: `${labelColors[milestone.label]}${theme === 'dark' ? `50` : ``}`, color: theme === 'dark' ? labelColors[milestone.label] : `white` }}>{milestone.label}</div>
           </div>
           <div className="text-lg">{milestone.description}</div>
           <div className="flex flex-row justify-between mt-4">

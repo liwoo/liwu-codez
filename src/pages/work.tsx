@@ -5,10 +5,6 @@ import Image from "next/image"
 import ArticleContainer from "../components/article-container"
 import { CSSProperties, useContext, useEffect, useRef, useState } from "react"
 import { animated, config, SpringValue, useSpring } from "@react-spring/web"
-import Terminal from "../components/icons/terminal"
-import Streaming from "../components/icons/streaming"
-import Reading from "../components/icons/reading"
-import useWindowSize from "../hooks/use-window-size"
 
 
 interface Skill {
@@ -34,11 +30,6 @@ interface Activity {
 
 type Milestone = Activity | number
 
-interface DescriptiveWord {
-  word: string
-  description: string
-  emoji: string
-}
 
 
 //record of Labels to colors
@@ -82,10 +73,10 @@ interface Project {
 const projects: Project[] = [
   {
     id: "mybucks",
-    title: "Official MyBucks Website",
+    title: "MyBucks Banking",
     description: "Official website of MyBucks Banking Corporation. \nI designed the entire site from scratch in Sketch while collaborating with marketing team. \nThe site was coded in React and GatsbyJS powered by a custom-build CMS in Strapi, deployed with Netlify!",
     tags: ["Website", "ReactJS", "GatsbyJS"],
-    previewLink: "https://mybucksbanking.mw",
+    previewLink: "https://www.mybucksbanking.mw/",
     image: "https://res.cloudinary.com/tiyeni/image/upload/v1651013189/Screen_Shot_2022-04-27_at_12.46.16_AM.png",
     metadata: {
       role: "Designer & Developer",
@@ -95,28 +86,30 @@ const projects: Project[] = [
   },
   {
     id: "cla",
-    title: "Official MyBucks Website",
-    description: "Some cool project I worked on...",
-    tags: ["Website", "ReactJS", "GatsbyJS"],
-    previewLink: "https://mybucksbanking.mw",
-    image: "https://res.cloudinary.com/tiyeni/image/upload/v1651013189/Screen_Shot_2022-04-27_at_12.46.16_AM.png",
+    title: "Zipatala pa Malawi",
+    description: "While at the Bill & Melinda Gates' sponsored Kuunika Program, I designed and part developed Malawi's Health Facility Register.  \nThis was my first time building a production ReactJS Application - and boy, how things have changed since. \nThe backend is build in NodeJS and the source code is available",
+    tags: ["Redux", "ReactJS", "NodeJS", "FHIR"],
+    previewLink: "http://zipatala.health.gov.mw/",
+    sourceCode: "https://github.com/BaobabHealthTrust/master-facility-list",
+    image: "https://res.cloudinary.com/tiyeni/image/upload/v1651275727/Screen_Shot_2022-04-30_at_1.41.56_AM.png",
     metadata: {
-      role: "Designer & Developer",
-      months: 8,
-      client: "MyBucks Bank"
+      role: "Architect & Lead Developer",
+      months: 14,
+      client: "Ministry of Health"
     }
   },
   {
     id: "getalinafe",
-    title: "Official MyBucks Website",
-    description: "Some cool project I worked on...",
-    tags: ["Website", "ReactJS", "GatsbyJS"],
-    previewLink: "https://mybucksbanking.mw",
-    image: "https://res.cloudinary.com/tiyeni/image/upload/v1651013189/Screen_Shot_2022-04-27_at_12.46.16_AM.png",
+    title: "GetAlinafe.com",
+    description: "I build Getalinafe.com to allow my fans to stream and download my album for free. \nAt the time, I was playing around with Svelte and wanted to see what the hype was all about, so I figured - what the heck. \nNonetheless it was a fun little project with quite the impact as well!",
+    tags: ["Svelte", "Tailwind", "Javascript"],
+    previewLink: "https://getalinafe.com",
+    sourceCode: "https://github.com/liwoo/getalinafe",
+    image: "https://res.cloudinary.com/tiyeni/image/upload/v1651277231/Screen_Shot_2022-04-30_at_2.06.57_AM.png",
     metadata: {
       role: "Designer & Developer",
-      months: 8,
-      client: "MyBucks Bank"
+      months: 1,
+      client: "Self"
     }
   },
 ]
@@ -432,8 +425,8 @@ function ProjectTab({ index, project }: { index: number, project: Project }) {
           </div>
           : null}
         <div className="flex justify-center w-full my-4 gap-x-3">
-          <button className="btn btn-primary">View Live Link</button>
-          <button className="btn" disabled={project.sourceCode === undefined}>View Source Code</button>
+          <a className="no-underline hover:no-underline" href={project.previewLink}><button className="btn btn-primary">View Live Link</button></a>
+          <a className="no-underline hover:no-underline" href={project.sourceCode ?? '#'}><button className="btn" disabled={project.sourceCode === undefined}>View Source Code</button> </a>
         </div>
         <div className="flex flex-col-reverse md:my-8 md:gap-x-6 gap-y-8 md:gap-y-0 md:flex-row">
           <div className="w-full md:w-1/2">{project.description.split('\n').map(par => <p className="my-3 text-lg">{par}</p>)}</div>

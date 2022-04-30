@@ -59,9 +59,9 @@ function Home() {
         </h2>
         <p className="hidden p-4 my-12 text-2xl lg:block bg-base-100/95 md:w-2/3 xl:w-3/4">
           <span> When I'm not</span>
-          <a>  recording Christian Rap Music </a>
+          <a href="https://www.youtube.com/watch?v=McDvYyCLYBs">  recording Christian Rap Music </a>
           <span>  or  </span>
-          <a> making Tech videos for my YouTube, </a>
+          <a href="https://www.youtube.com/watch?v=bs1l9CR8xR0&t=2s"> making Tech videos for my YouTube, </a>
           <span>  I'm probably moving humanity forward by  </span>
           <a> writing Software that improves peoples lives. </a>
         </p>

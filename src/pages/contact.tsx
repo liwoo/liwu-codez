@@ -120,11 +120,16 @@ function Contact() {
     return decisionTree[selectedDecisions.firstDecision][selectedDecisions.secondDecision]
   }
 
+  function isValidEmail(email: string) {
+    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+  }
+
   function validateForm() {
     const emailValue = emailRef?.current?.value ?? "" as String
     const messageValue = messageRef?.current?.value ?? "" as String
     const shouldRequireMessage = getCurrentInput()?.TextArea?.required ?? true
-    const isValid = emailValue.length > 5 && (shouldRequireMessage ? messageValue.length > 8 : true)
+    const isValid = isValidEmail(emailValue) && (shouldRequireMessage ? messageValue.length > 8 : true)
     setIsFormValid(isValid)
   }
 

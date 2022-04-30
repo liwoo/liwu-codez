@@ -70,7 +70,7 @@ export default function Nav() {
     {
       label: "Youtube",
       ligthIcon: "/icons/youtube.svg",
-      link: "https://youtube.com/liwucodes",
+      link: "https://www.youtube.com/channel/UCNEXAX15mO3rsVQQQve6Iog",
       icon: <Youtube classOverride={`${theme === 'dark' ? `fill-[#D2CBCB]` : `fill-[#032F4C]`} h-5 w-5`} />
     },
     {
@@ -82,7 +82,7 @@ export default function Nav() {
     {
       label: "Spotify",
       ligthIcon: "/icons/spotify.svg",
-      link: "https://open.spotify.com/user/liwucodes",
+      link: "https://open.spotify.com/artist/3rglolSNrGllZKwpuu9b8U?si=93921d3c51434595",
       icon: <Spotify classOverride={`${theme === 'dark' ? `fill-[#D2CBCB]` : `fill-[#032F4C]`} h-5 w-5`} />
     },
   ]

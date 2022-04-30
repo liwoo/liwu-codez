@@ -7,6 +7,10 @@ h1,h2,h3,h4,h5,h6,p,a,button,div {
   @apply font-SpaceGrotesk
 }
 
+input::placeholder {
+  @apply text-base-content/50;
+}
+
 .btn {
   @apply rounded-full;
 }
