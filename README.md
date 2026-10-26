@@ -37,6 +37,12 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 You can start editing the page by modifying `src/pages/index.js`. The page auto-updates as you edit the file.
 
 
+## Blog posts
+
+The `/blog` page lists the posts from [liwoo/personal-site-24](https://github.com/liwoo/personal-site-24) (`src/content/post`) and links each one to where it's published on [chienda.com](https://chienda.com). Posts are fetched at build time and refreshed hourly with Incremental Static Regeneration, so new posts appear without a redeploy. Drafts are skipped, same as the Astro site.
+
+The GitHub API allows 60 unauthenticated requests an hour per IP. If that's ever hit, set a `GITHUB_TOKEN` environment variable (a fine-grained token with public read access is enough). Source: `src/lib/posts.ts`.
+
 ## Deploy on Vercel
 
 Once you have the project running locally you can [import](https://vercel.com/import/git) your project to Vercel and get it up and running in a few clicks.
