@@ -32,11 +32,11 @@ function MyApp({ Component, pageProps }: AppProps) {
         <meta property="og:description" content="Jermiah Chienda is a Malawian Software Engineer, Recording Hip-hop Artist, Youtuber and Tech Enthusiast with more than 5 years Professional Experience accross 3 industries." />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://www.liwu.codes" />
-        <meta property="og:image" content="https://res.cloudinary.com/tiyeni/image/upload/v1638831306/dp_new.png" />
-        <meta property="og:image:width" content="500" />
-        <meta property="og:image:height" content="500" />
+        <meta property="og:image" content="https://pub-a0f6f56fff3c42b9bb30bd2143c99754.r2.dev/2026.jpg" />
+        <meta property="og:image:width" content="880" />
+        <meta property="og:image:height" content="1168" />
         <meta property="og:image:alt" content="Liwu's Digital Garden" />
-        <meta property="og:image:type" content="image/png" />
+        <meta property="og:image:type" content="image/jpeg" />
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
         <link rel="icon" type="image/svg+xml" href="favicon/favicon.svg" />
         <link rel="icon" type="image/png" href="favicon/favicon.png" />

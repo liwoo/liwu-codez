@@ -5,6 +5,7 @@ import Image from "next/image"
 import ArticleContainer from "../components/article-container"
 import { CSSProperties, useContext, useEffect, useRef, useState } from "react"
 import { animated, config, SpringValue, useSpring } from "@react-spring/web"
+import { Project, projects } from "../data/projects"
 
 
 interface Skill {
@@ -21,69 +22,53 @@ interface Company {
 }
 
 
-interface ProjectMeta {
-  role: string
-  months: number
-  client: string
-}
-
-interface Project {
-  id: string
-  title: string
-  description: string
-  tags: string[]
-  previewLink: string
-  sourceCode?: string
-  image?: string
-  metadata: ProjectMeta
-}
-
-const projects: Project[] = [
-  {
-    id: "mybucks",
-    title: "MyBucks Banking",
-    description: "Official website of MyBucks Banking Corporation. \nI designed the entire site from scratch in Sketch while collaborating with marketing team. \nThe site was coded in React and GatsbyJS powered by a custom-build CMS in Strapi, deployed with Netlify!",
-    tags: ["Website", "ReactJS", "GatsbyJS"],
-    previewLink: "https://www.mybucksbanking.mw/",
-    image: "https://res.cloudinary.com/tiyeni/image/upload/v1651013189/Screen_Shot_2022-04-27_at_12.46.16_AM.png",
-    metadata: {
-      role: "Designer & Developer",
-      months: 8,
-      client: "MyBucks Bank"
-    }
-  },
-  {
-    id: "cla",
-    title: "Zipatala pa Malawi",
-    description: "While at the Bill & Melinda Gates' sponsored Kuunika Program, I designed and part developed Malawi's Health Facility Register.  \nThis was my first time building a production ReactJS Application - and boy, how things have changed since. \nThe backend is build in NodeJS and the source code is available",
-    tags: ["Redux", "ReactJS", "NodeJS", "FHIR"],
-    previewLink: "http://zipatala.health.gov.mw/",
-    sourceCode: "https://github.com/BaobabHealthTrust/master-facility-list",
-    image: "https://res.cloudinary.com/tiyeni/image/upload/v1651275727/Screen_Shot_2022-04-30_at_1.41.56_AM.png",
-    metadata: {
-      role: "Architect & Lead Developer",
-      months: 14,
-      client: "Ministry of Health"
-    }
-  },
-  {
-    id: "getalinafe",
-    title: "GetAlinafe.com",
-    description: "I build Getalinafe.com to allow my fans to stream and download my album for free. \nAt the time, I was playing around with Svelte and wanted to see what the hype was all about, so I figured - what the heck. \nNonetheless it was a fun little project with quite the impact as well!",
-    tags: ["Svelte", "Tailwind", "Javascript"],
-    previewLink: "https://getalinafe.com",
-    sourceCode: "https://github.com/liwoo/getalinafe",
-    image: "https://res.cloudinary.com/tiyeni/image/upload/v1651277231/Screen_Shot_2022-04-30_at_2.06.57_AM.png",
-    metadata: {
-      role: "Designer & Developer",
-      months: 1,
-      client: "Self"
-    }
-  },
-]
-
-
+// Current employers first (logos from chienda.com), then earlier clients
 const companies: Company[] = [
+  {
+    id: "ico",
+    name: "ICO",
+    logo: "img/companies/ico.png",
+  },
+  {
+    id: "irembo",
+    name: "Irembo",
+    logo: "img/companies/irembo.png",
+  },
+  {
+    id: "bestseller",
+    name: "Bestseller",
+    logo: "img/companies/bestseller.png",
+  },
+  {
+    id: "oaf",
+    name: "One Acre Fund",
+    logo: "img/companies/oaf.png",
+  },
+  {
+    id: "bht",
+    name: "Baobab Health Trust",
+    logo: "img/companies/bht.png",
+  },
+  {
+    id: "kuunika",
+    name: "Kuunika",
+    logo: "img/companies/kuunika.png",
+  },
+  {
+    id: "centenary",
+    name: "Centenary Bank",
+    logo: "img/companies/centenary.png",
+  },
+  {
+    id: "nbs",
+    name: "NBS Bank",
+    logo: "img/companies/nbs.png",
+  },
+  {
+    id: "mtl",
+    name: "MTL",
+    logo: "img/companies/mtl.png",
+  },
   {
     id: "times",
     name: "Times Group",
@@ -100,34 +85,9 @@ const companies: Company[] = [
     logo: "logos/tnm.png",
   },
   {
-    id: "mybucks",
-    name: "MyBucks",
-    logo: "logos/mybucks.png",
-  },
-  {
-    id: "oaf",
-    name: "One Acre Fund",
-    logo: "logos/oaf.png",
-  },
-  {
     id: "bmg",
     name: "Bill & Melinda Gates Foundation",
     logo: "logos/bmg.png",
-  },
-  {
-    id: "nbs",
-    name: "NBS Bank",
-    logo: "logos/nbs.png",
-  },
-  {
-    id: "ugi",
-    name: "United General Insurance",
-    logo: "logos/ugi.png",
-  },
-  {
-    id: "mtl",
-    name: "MTL",
-    logo: "logos/mtl.png",
   },
 ]
 
@@ -261,6 +221,7 @@ function WorkPage() {
             </div>
             <div className="w-full lg:w-3/5">
               {projects.map((project, index) => <ProjectTab key={project.id} project={project} index={index} />)}
+              <p className="mt-8 text-center"><a href="https://chienda.com/projects">See every project on chienda.com</a></p>
             </div>
           </ArticleContainer>
         </animated.div>
@@ -277,21 +238,20 @@ function ProjectTab({ index, project }: { index: number, project: Project }) {
         {`0${index + 1}. ${project.title}`}
       </h2>
       <div className="collapse-content">
-        {project.image ?
-          <div className="hover:shadow-lg transition-all mockup-window bg-base-300">
-            <div className="flex justify-center bg-base-200">
-              <Image width={900} height={450} src={project.image} alt={`Screenshot of ${project.title}`} className="border" />
-            </div>
+        <div className="transition-all hover:shadow-lg mockup-window bg-base-300">
+          <div className="flex justify-center bg-base-200">
+            <Image width={900} height={473} src={project.image} alt={project.imageAlt} objectFit="cover" />
           </div>
-          : null}
+        </div>
         <div className="flex flex-wrap justify-center w-full my-4 gap-3">
-          <a className="no-underline btn btn-primary" href={project.previewLink} target="_blank" rel="noopener noreferrer">View Live Link</a>
+          <a className="no-underline btn btn-primary" href={project.caseStudy}>Read the Case Study</a>
+          <a className="no-underline btn" href={project.previewLink} target="_blank" rel="noopener noreferrer">View Live Link</a>
           {project.sourceCode
-            ? <a className="no-underline btn" href={project.sourceCode} target="_blank" rel="noopener noreferrer">View Source Code</a>
-            : <button className="btn" disabled>Source Code Private</button>}
+            ? <a className="no-underline btn btn-ghost" href={project.sourceCode} target="_blank" rel="noopener noreferrer">View Source Code</a>
+            : null}
         </div>
         <div className="flex flex-col-reverse md:my-8 md:gap-x-6 gap-y-8 md:gap-y-0 md:flex-row">
-          <div className="w-full md:w-1/2">{project.description.split('\n').map(par => <p key={par} className="my-3 text-lg">{par}</p>)}</div>
+          <div className="w-full md:w-1/2"><p className="my-3 text-lg">{project.description}</p></div>
           <div className="flex flex-col w-full gap-y-3 md:w-1/2">
             <div>
               {Object.entries(project.metadata).map(entry => <Metafield key={entry[0]} title={entry[0]} description={entry[1]} />)}
@@ -318,7 +278,7 @@ function Metafield({ title, description }: { title: string, description: string 
 function Skill({ skill, intersected, index }: { skill: Skill, intersected: boolean, index: number }) {
   const percentage = skill.years / 6 * 100
   const props = useSpring({
-    width: intersected ? `${percentage}` : `0%`,
+    width: intersected ? `${percentage}%` : `0%`,
     from: { width: `0%` },
     config: config.wobbly,
     delay: 100 + index * 200

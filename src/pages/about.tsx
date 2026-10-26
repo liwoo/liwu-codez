@@ -11,28 +11,7 @@ import Reading from "../components/icons/reading"
 import useWindowSize from "../hooks/use-window-size"
 import Link from "next/link"
 
-type Label = "personal" | "professional" | "education" | "other"
-
-interface Activity {
-  id: string
-  title: string
-  description: string
-  image?: string
-  label: Label
-  startDate: Date
-  endDate: Date
-  location: string
-  showRange: boolean
-}
-
-type Milestone = Activity | number
-
-interface DescriptiveWord {
-  word: string
-  description: string
-  emoji: string
-}
-
+import { Activity, DescriptiveWord, Label, milestones, monthYear, Service, services, words } from "../data/about"
 
 // Full class names (not built from strings) so Tailwind generates them.
 // The tint carries the label colour; text stays base-content so it passes WCAG AA in both themes.
@@ -42,181 +21,6 @@ const labelStyles: { [key in Label]: string } = {
   education: "bg-education/30 border-education",
   other: "bg-other/30 border-other",
 }
-
-interface Service {
-  id: string
-  icon: string
-  title: string
-  description: string
-}
-
-const services: Service[] = [
-  {
-    id: "web",
-    icon: "icons/web-dev.svg",
-    title: "Websites and WebApp Development",
-    description: "I build world class websites and web applications using industry standard technologies.",
-  },
-  {
-    id: "mobile",
-    icon: "icons/smartphone.svg",
-    title: "Mobile App Development",
-    description: "I specialize in Cross-Platform Mobile App Development using Flutter.",
-  },
-  {
-    id: "api",
-    icon: "icons/api.svg",
-    title: "API Design and Development",
-    description: "RESTful API's, ProtoBufs and GraphQL are my specialty.",
-  },
-  {
-    id: "speak",
-    icon: "icons/hoodie.svg",
-    title: "Speaking & Technical Writing",
-    description: "I will speak at your event, or write technical articles for your publications.",
-  },
-  {
-    id: "ui",
-    icon: "icons/responsive.svg",
-    title: "UX/UI Design",
-    description: "Sometimes I will whip up Figma or Sketch to build High Fidelity prototypes.",
-  },
-  {
-    id: "web3",
-    icon: "icons/smart-contracts.svg",
-    title: "Smart Contract Development",
-    description: "Recently, I've been dabbling with Solidity and Anchor",
-  },
-]
-
-const words: DescriptiveWord[] = [
-  {
-    word: "Opinionated 🙈",
-    description: "They say I'm VERY Opinionated: I'm not afraid of standing up for my point of view, even if goes agains the status quo",
-    emoji: "💬",
-  },
-  {
-    word: "Wise",
-    description: "\"He is a careful thinker who thinks things through and never makes rash decisions. He values rationality, intellectual strength and independence.\"",
-    emoji: "🤔",
-  },
-  {
-    word: "Down to Earth",
-    description: "My brother told me that I was down to earth, which means that no matter who I’m talking to, I try to connect with him or her. It’s a great compliment.",
-    emoji: "🌍",
-  },
-  {
-    word: "Creative",
-    description: "\"As a leader, he fosters creativity and innovation. Combining these qualities with a passion for detail, Liwu is a powerhouse of innovation.\"",
-    emoji: "🪄",
-  },
-]
-
-//list of milestones
-const milestones: Milestone[] = [
-  1990,
-  {
-    id: "1",
-    title: "👶  Born",
-    description: "Born in a small picturesque village in the south of Malawi called Thyolo",
-    label: "personal",
-    startDate: new Date(1990, 4, 9),
-    endDate: new Date(1990, 4, 9),
-    location: "Thyolo, Malawi",
-    showRange: false,
-  },
-  2006,
-  {
-    id: "2",
-    title: "I'm on TV",
-    description: "I made my first appearance as a Sports Anchor on TV to cover the 2006 World Cup",
-    label: "personal",
-    startDate: new Date(2006, 5, 1),
-    endDate: new Date(2006, 5, 1),
-    location: "Blantyre, Malawi",
-    showRange: false,
-  },
-  {
-    id: "3",
-    title: "I am Jason Bourne... Again",
-    description: "Began an life-long adventurous journey as Born Again Christian: For me to Live is Christ and to die is Gain",
-    label: "personal",
-    startDate: new Date(2006, 11, 31),
-    endDate: new Date(2006, 11, 31),
-    location: "Blantyre, Malawi",
-    showRange: false,
-  },
-  2007,
-  {
-    id: "4",
-    title: "First Computer Program",
-    description: "I wrote my first piece of code in Turbo C++ thanks to a friend of my mum's and immediately found my calling!",
-    label: "personal",
-    startDate: new Date(2007, 1, 1),
-    endDate: new Date(2007, 1, 1),
-    location: "Blantyre, Malawi",
-    showRange: false,
-  },
-  2011,
-  {
-    id: "5",
-    title: "Mama we made it 🥳",
-    description: "Graduated from the University of Malawi, The Polytechnic",
-    //need to find graduation picture
-    label: "education",
-    startDate: new Date("2007-07-01"),
-    endDate: new Date("2012-07-01"),
-    location: "Blantyre, Malawi",
-    showRange: true,
-  },
-  2014,
-  {
-    id: "6",
-    title: "Let's Disrupt Tourism",
-    description: "Founded my first startup, tiyeni.app, to disrupt tourism in Malawi. But that's a story for another day",
-    image: "https://res.cloudinary.com/tiyeni/image/upload/v1651273860/tiyeni2.jpg",
-    label: "other",
-    startDate: new Date("2016-04-01"),
-    endDate: new Date("2016-04-01"),
-    location: "Kyoto, Japan",
-    showRange: false,
-  },
-  {
-    id: "7",
-    title: "🎓🎓  Graduated, Again!",
-    description: "Completed my Masters in Computer Science from Doshisha University, Japan",
-    image: "https://res.cloudinary.com/tiyeni/image/upload/v1651273383/graduation.jpg",
-    label: "education",
-    startDate: new Date("2014-07-01"),
-    endDate: new Date("2017-05-01"),
-    location: "Kyoto, Japan",
-    showRange: true,
-  },
-  2017,
-  {
-    id: "8",
-    title: "Wedding Bells 💒",
-    description: "Married my College sweet❤️, and begun our new life in Lilongwe",
-    image: "https://res.cloudinary.com/tiyeni/image/upload/v1651274000/wedding.jpg",
-    label: "personal",
-    startDate: new Date("2017-09-02"),
-    endDate: new Date("2017-09-02"),
-    location: "Blantyre, Malawi",
-    showRange: false,
-  },
-  2019,
-  {
-    id: "9",
-    title: "Making (r)Apps",
-    description: "Released my acclaimed solo Album, getalinafe.com...",
-    image: "https://res.cloudinary.com/tiyeni/image/upload/v1651274165/rapping.jpg",
-    label: "personal",
-    startDate: new Date("2019-09-02"),
-    endDate: new Date("2019-09-02"),
-    location: "Blantyre, Malawi",
-    showRange: false,
-  },
-]
 
 function AboutPage() {
   const initialMilestones = milestones.filter(milestone => typeof milestone !== 'number').map(milestone => {
@@ -365,7 +169,7 @@ function AboutPage() {
             </animated.div>
           </div>
           <animated.div style={objectStyles} className="w-1/2 mx-auto mb-8 -mt-16 md:-mt-0 md:mb-0 md:mx-0 md:w-1/3">
-            <Image width={600} height={700} src="https://res.cloudinary.com/tiyeni/image/upload/v1638831306/dp_new.png" alt="Jeremiah Chienda" className="rounded-lg" layout="responsive" objectFit="cover" />
+            <Image width={600} height={797} src="/img/jeremiah.jpg" alt="Jeremiah Chienda" className="rounded-lg" layout="responsive" objectFit="cover" priority />
             <div className="hidden my-20 md:block">
               <blockquote>Success isn't about how much money you make, it's about the difference you make in people's lives </blockquote>
               <cite>Michelle Obama</cite>
@@ -495,7 +299,7 @@ function Activity({ milestone, intersected }: { milestone: Activity, intersected
       <animated.div style={props} id={milestone.id} className={`overflow-x-hidden flex flex-col transition-all duration-300 w-full items-center w-full md:w-3/4 p-6 mx-auto text-left shadow ${isEven ? 'lg:-ml-8' : 'lg:-mr-8'} lg:w-1/2 lg:flex-row gap-x-6 bg-base-200`}>
         {milestone.image && !imageFailed ?
           <div className="w-full mb-8 lg:w-1/2 lg:mb-0">
-            <img ref={imageRef} onError={() => setImageFailed(true)} className="mx-auto mask mask-squircle" src={milestone.image} alt={milestone.title} />
+            <img ref={imageRef} onError={() => setImageFailed(true)} className="object-contain p-3 mx-auto bg-white rounded-lg max-h-36" src={milestone.image} alt="" />
           </div>
           : null}
         <div className="flex flex-col">
@@ -512,13 +316,6 @@ function Activity({ milestone, intersected }: { milestone: Activity, intersected
       </animated.div>
     </div>
   )
-}
-
-export function monthYear(date: Date): string {
-  return date.toLocaleDateString("en-US", {
-    month: "long",
-    year: "numeric",
-  })
 }
 
 export default function About() {

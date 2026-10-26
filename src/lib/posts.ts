@@ -1,6 +1,7 @@
 // Server-only: import this from getStaticProps only, so gray-matter stays out of the client bundle
 import matter from "gray-matter"
 import { BLOG_BRANCH, BLOG_POSTS_DIR, BLOG_REPO, BLOG_SITE, Post } from "./blog-config"
+import { fetchWithRetry } from "./fetch-with-retry"
 
 interface GitHubContentItem {
   name: string
@@ -13,16 +14,6 @@ function githubHeaders(): HeadersInit {
   const headers: HeadersInit = { Accept: "application/vnd.github+json" }
   if (process.env.GITHUB_TOKEN) headers["Authorization"] = `Bearer ${process.env.GITHUB_TOKEN}`
   return headers
-}
-
-// One retry smooths over transient network/DNS blips during builds and revalidation
-async function fetchWithRetry(url: string, init?: RequestInit): Promise<Response> {
-  try {
-    return await fetch(url, init)
-  } catch {
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    return fetch(url, init)
-  }
 }
 
 function toIso(value: unknown): string | null {
