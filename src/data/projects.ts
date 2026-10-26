@@ -1,5 +1,6 @@
-// Snapshot of the most relevant projects from chienda.com (src/data/projects.ts in liwoo/personal-site-24).
-// Each one links to its full case study there.
+// The top 3 projects. IremboAI and GeniYanga are snapshots from chienda.com
+// (src/data/projects.ts in liwoo/personal-site-24) and link to their case studies there;
+// Eh Khristu has no case study yet, so it links to the live product.
 
 export interface ProjectMeta {
   role: string
@@ -14,7 +15,7 @@ export interface Project {
   tags: string[]
   previewLink: string
   sourceCode?: string
-  caseStudy: string
+  caseStudy?: string
   image: string
   imageAlt: string
   metadata: ProjectMeta
@@ -37,21 +38,6 @@ export const projects: Project[] = [
     },
   },
   {
-    id: "signal",
-    title: "Signal",
-    description: "A narrative coding game that teaches the Go programming language — write real Go to break cryptographer Dr. Maya Chen out of a locked-down facility.",
-    tags: ["Next.js","React"],
-    previewLink: "https://www.playsignal.xyz/",
-    caseStudy: "https://chienda.com/projects/signal",
-    image: "https://www.playsignal.xyz/og.jpg",
-    imageAlt: "Signal — learn Go by saving Dr. Maya Chen",
-    metadata: {
-      role: "Creator & Engineer",
-      duration: "2025 - Present",
-      client: "Signal",
-    },
-  },
-  {
     id: "geniyanga",
     title: "GeniYanga",
     description: "A mobile point-of-sale system built for how Malawian businesses actually trade — inventory, cashiers, customers, payments and online selling in one MRA-compliant platform.",
@@ -67,49 +53,17 @@ export const projects: Project[] = [
     },
   },
   {
-    id: "times-elections-dashboard",
-    title: "Presidential Elections Dashboard",
-    description: "Real-time election results dashboard covering the 2025 Malawian Presidential and Parliamentary Elections with minute-by-minute updates and comprehensive historical analysis.",
-    tags: ["React","Node.js","MapBox","Tailwind","WebSockets"],
-    previewLink: "https://www.youtube.com/live/_IQyibJ2UHI?si=lGPJJw3y3Dm67YcI",
-    caseStudy: "https://chienda.com/projects/times-elections-dashboard",
-    image: "https://minio-api.dartsmw.com/chienda.com/times-tv.jpg",
-    imageAlt: "Times Elections Dashboard",
+    id: "eh-khristu",
+    title: "Eh Khristu",
+    description: "A church giving platform across Africa: members give with mobile money, cards or bank apps, and churches see every gift by fund in real time, with reports and year-end statements. Live in Malawi, Ghana, Kenya, Uganda, Tanzania, Rwanda, Zambia, Zimbabwe and Côte d’Ivoire.",
+    tags: ["Next.js","PocketBase","Go","Astro","Cloudflare"],
+    previewLink: "https://ehkhristu.org",
+    image: "https://pub-aae4f72dd7e642ba8de3e090625bee40.r2.dev/eh-khristu-main.jpg",
+    imageAlt: "Eh Khristu church giving dashboard",
     metadata: {
-      role: "Designer & Developer",
-      duration: "Nov 2024 - Sep 2025",
-      client: "Times Group",
-    },
-  },
-  {
-    id: "mtl-smart-app",
-    title: "MTL Smart App",
-    description: "A comprehensive mobile application for MTL customers to manage their mobile services including airtime top-ups, data bundles, balance checks, and advanced account management features.",
-    tags: ["Flutter",".NET","Kubernetes","PostgreSQL"],
-    previewLink: "https://www.mtlyanga.mtl.mw/",
-    caseStudy: "https://chienda.com/projects/mtl-smart-app",
-    image: "https://minio-api.dartsmw.com/chienda.com/mtl.jpg",
-    imageAlt: "MTL Smart App",
-    metadata: {
-      role: "Lead Mobile Engineer",
-      duration: "Mar 2023 - Present",
-      client: "MTL",
-    },
-  },
-  {
-    id: "zipatala",
-    title: "Master Health Facility Registry",
-    description: "Malawi's implementation of OpenHIEs Facility Registry, as part of the Interoperability Layer; implemented in collaboration with the Ministry of Health.",
-    tags: ["React","Node.js","Javascript","FHIR"],
-    previewLink: "https://zipatala.health.gov.mw/",
-    sourceCode: "https://github.com/BaobabHealthTrust/master-facility-list",
-    caseStudy: "https://chienda.com/projects/zipatala",
-    image: "https://minio-api.dartsmw.com/chienda.com/zipatala.jpg",
-    imageAlt: "Zipatala.com",
-    metadata: {
-      role: "Software Architect",
-      duration: "2018 - 2020",
-      client: "Baobab Health Trust",
+      role: "Founder & Engineer",
+      duration: "2026 - Present",
+      client: "Eh Khristu",
     },
   },
 ]

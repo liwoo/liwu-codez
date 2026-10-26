@@ -31,27 +31,13 @@ module.exports = {
         SpaceGrotesk: ["Space Grotesk", "sans-serif"] 
       },
       animation: {
-        logos: 'slide 30s linear infinite',
-        logosMd: 'slideMd 30s linear infinite',
-        logosLg: 'slideLg 20s linear infinite',
-        logosXl: 'slideXl 20s linear infinite',
+        // Logo cloud on /work: the track holds two copies, so -50% is exactly one copy
+        marquee: 'marquee 40s linear infinite',
       },
       keyframes: {
-        slide: {
-          from: {transform: `translateX(0%)`},
-          to: {transform: `translateX(-100%)`}
-        },
-        slideMd: {
-          from: {transform: `translateX(100%) translateY(-100%)`},
-          to: {transform: `translateX(0%) translateY(-100%)`}
-        },
-        slideLg: {
-          from: {transform: `translateX(0%)`},
-          to: {transform: `translateX(-50%)`}
-        },
-        slideXl: {
-          from: {transform: `translateX(0%)`},
-          to: {transform: `translateX(-25%)`}
+        marquee: {
+          from: { transform: 'translateX(0)' },
+          to: { transform: 'translateX(-50%)' },
         },
       }
     },

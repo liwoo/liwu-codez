@@ -3,7 +3,7 @@ import { Alignment, Fit } from "rive-react"
 import BackgroundAnimation, { AnimationContext } from "../components/background-animation"
 import Image from "next/image"
 import ArticleContainer from "../components/article-container"
-import { CSSProperties, useContext, useEffect, useRef, useState } from "react"
+import { CSSProperties, useContext, useEffect, useState } from "react"
 import { animated, config, SpringValue, useSpring } from "@react-spring/web"
 import { Project, projects } from "../data/projects"
 
@@ -19,76 +19,25 @@ interface Company {
   id: string
   name: string
   logo: string
+  // Display height in px. Logos range from square-ish (ICO) to very wide (Bestseller),
+  // so each is sized to roughly the same visual area rather than the same height.
+  height: number
 }
 
-
-// Current employers first (logos from chienda.com), then earlier clients
+// Current employers first, then earlier clients. Logos come from chienda.com, trimmed of padding.
 const companies: Company[] = [
-  {
-    id: "ico",
-    name: "ICO",
-    logo: "img/companies/ico.png",
-  },
-  {
-    id: "irembo",
-    name: "Irembo",
-    logo: "img/companies/irembo.png",
-  },
-  {
-    id: "bestseller",
-    name: "Bestseller",
-    logo: "img/companies/bestseller.png",
-  },
-  {
-    id: "oaf",
-    name: "One Acre Fund",
-    logo: "img/companies/oaf.png",
-  },
-  {
-    id: "bht",
-    name: "Baobab Health Trust",
-    logo: "img/companies/bht.png",
-  },
-  {
-    id: "kuunika",
-    name: "Kuunika",
-    logo: "img/companies/kuunika.png",
-  },
-  {
-    id: "centenary",
-    name: "Centenary Bank",
-    logo: "img/companies/centenary.png",
-  },
-  {
-    id: "nbs",
-    name: "NBS Bank",
-    logo: "img/companies/nbs.png",
-  },
-  {
-    id: "mtl",
-    name: "MTL",
-    logo: "img/companies/mtl.png",
-  },
-  {
-    id: "times",
-    name: "Times Group",
-    logo: "logos/times.png",
-  },
-  {
-    id: "undp",
-    name: "UNDP",
-    logo: "logos/undp.png",
-  },
-  {
-    id: "tnm",
-    name: "TNM",
-    logo: "logos/tnm.png",
-  },
-  {
-    id: "bmg",
-    name: "Bill & Melinda Gates Foundation",
-    logo: "logos/bmg.png",
-  },
+  { id: "ico", name: "ICO", logo: "/img/companies/ico.png", height: 48 },
+  { id: "irembo", name: "Irembo", logo: "/img/companies/irembo.png", height: 33 },
+  { id: "bestseller", name: "Bestseller", logo: "/img/companies/bestseller.png", height: 20 },
+  { id: "oaf", name: "One Acre Fund", logo: "/img/companies/oaf.png", height: 26 },
+  { id: "bht", name: "Baobab Health Trust", logo: "/img/companies/bht.png", height: 35 },
+  { id: "kuunika", name: "Kuunika", logo: "/img/companies/kuunika.png", height: 34 },
+  { id: "centenary", name: "Centenary Bank", logo: "/img/companies/centenary.png", height: 44 },
+  { id: "nbs", name: "NBS Bank", logo: "/img/companies/nbs.png", height: 32 },
+  { id: "mtl", name: "MTL", logo: "/img/companies/mtl.png", height: 40 },
+  { id: "times", name: "Times Group", logo: "/img/companies/times.png", height: 29 },
+  { id: "undp", name: "UNDP", logo: "/img/companies/undp.png", height: 45 },
+  { id: "tnm", name: "TNM", logo: "/img/companies/tnm.png", height: 42 },
 ]
 
 const skills: Skill[] = [
@@ -145,7 +94,6 @@ function WorkPage() {
 
 
   const interactions = useContext(AnimationContext)
-  const logosContainerRef = useRef(null)
 
   useEffect(() => {
     const observer = new IntersectionObserver(entries => {
@@ -198,20 +146,7 @@ function WorkPage() {
       <div className="flex flex-col items-center px-4 py-12 mt-12 overflow-x-hidden text-neutral-content bg-neutral">
         <h2 className="my-3 text-2xl font-bold">UR In Great Company</h2>
         <p className="text-center">I've been extremely priviledged to do work with these awesome companies over the years</p>
-        <div className="relative overflow-hidden" style={{ height: `${logosContainerRef.current?.clientHeight}px` }}>
-          {/* The marquee repeats every logo, so screen readers get one plain list instead */}
-          <ul className="sr-only">{companies.map(company => <li key={company.id}>{company.name}</li>)}</ul>
-          <div ref={logosContainerRef} aria-hidden="true" className="inline-flex p-8 overflow-x-hidden gap-x-12 animate-logos motion-reduce:animate-none">
-            {companies.map(company =>
-              <div key={company.id} className="w-40 h-20 overflow-none"><img src={company.logo} alt="" /></div>
-            )}
-          </div>
-          <div aria-hidden="true" className="inline-flex p-8 overflow-x-hidden gap-x-12 animate-logosMd motion-reduce:hidden">
-            {companies.map(company =>
-              <div key={company.id} className="w-40 h-20 overflow-none"><img src={company.logo} alt="" /></div>
-            )}
-          </div>
-        </div>
+        <LogoCloud companies={companies} />
       </div>
       <div className="container p-4">
         <animated.div id="timeline">
@@ -244,8 +179,10 @@ function ProjectTab({ index, project }: { index: number, project: Project }) {
           </div>
         </div>
         <div className="flex flex-wrap justify-center w-full my-4 gap-3">
-          <a className="no-underline btn btn-primary" href={project.caseStudy}>Read the Case Study</a>
-          <a className="no-underline btn" href={project.previewLink} target="_blank" rel="noopener noreferrer">View Live Link</a>
+          {project.caseStudy
+            ? <a className="no-underline btn btn-primary" href={project.caseStudy}>Read the Case Study</a>
+            : null}
+          <a className={`no-underline btn ${project.caseStudy ? "" : "btn-primary"}`} href={project.previewLink} target="_blank" rel="noopener noreferrer">Visit {new URL(project.previewLink).hostname.replace(/^www\./, "")}</a>
           {project.sourceCode
             ? <a className="no-underline btn btn-ghost" href={project.sourceCode} target="_blank" rel="noopener noreferrer">View Source Code</a>
             : null}
@@ -261,6 +198,28 @@ function ProjectTab({ index, project }: { index: number, project: Project }) {
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  )
+}
+
+function LogoCloud({ companies }: { companies: Company[] }) {
+  const logos = (hidden: boolean) => (
+    <ul aria-hidden={hidden || undefined} className={`flex items-center shrink-0 gap-x-12 pr-12 sm:gap-x-16 sm:pr-16 motion-reduce:flex-wrap motion-reduce:justify-center motion-reduce:gap-y-8 motion-reduce:px-4 motion-reduce:shrink ${hidden ? "motion-reduce:hidden" : ""}`}>
+      {companies.map(company => (
+        <li key={company.id} className="flex items-center justify-center h-12 shrink-0">
+          <img src={company.logo} alt={hidden ? "" : company.name} style={{ height: company.height }} className="block w-auto max-w-none" />
+        </li>
+      ))}
+    </ul>
+  )
+  return (
+    // Two identical copies slide left by exactly one copy's width, so the loop is seamless.
+    // Edges fade out; hovering pauses; with reduced motion it's a static, wrapped row.
+    <div className="w-full mt-10 overflow-hidden group [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)] motion-reduce:[mask-image:none]">
+      <div className="flex w-max animate-marquee group-hover:[animation-play-state:paused] motion-reduce:animate-none motion-reduce:w-full motion-reduce:justify-center">
+        {logos(false)}
+        {logos(true)}
       </div>
     </div>
   )
