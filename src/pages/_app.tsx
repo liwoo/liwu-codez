@@ -5,6 +5,13 @@ import { ThemeProvider as NextThemesProvider, ThemeProviderProps } from 'next-th
 import Nav from '../components/nav'
 import Footer from '../components/footer'
 import { useRouter } from 'next/router'
+import { Globals } from '@react-spring/web'
+
+// Respect "reduce motion": jump every spring (and its delay) straight to its end state.
+// Set at module load so it applies before the first page's springs start.
+if (typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
+  Globals.assign({ skipAnimation: true })
+}
 
 // next-themes' typings expect React 18's PropsWithChildren; re-type it for our React 17 types
 const ThemeProvider = NextThemesProvider as React.FC<ThemeProviderProps>
@@ -34,8 +41,11 @@ function MyApp({ Component, pageProps }: AppProps) {
         <link rel="icon" type="image/svg+xml" href="favicon/favicon.svg" />
         <link rel="icon" type="image/png" href="favicon/favicon.png" />
       </Head>
+      <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-1/2 focus:-translate-x-1/2 focus:z-50 btn btn-primary">Skip to content</a>
       <Nav />
-      <Component {...pageProps} />
+      <main id="main">
+        <Component {...pageProps} />
+      </main>
       {pathsWithoutFooter.includes(router.pathname) ? null : <Footer />}
     </ThemeProvider>
   )

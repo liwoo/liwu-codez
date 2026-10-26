@@ -31,3 +31,11 @@ cite {
   @apply py-4 before:content-["\2015"]
 }
 @import 'tailwindcss/utilities';
+
+/* Respect "reduce motion" for CSS transitions too (springs are handled in _app) */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

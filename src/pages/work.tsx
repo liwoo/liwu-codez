@@ -16,6 +16,7 @@ interface Skill {
 
 interface Company {
   id: string
+  name: string
   logo: string
 }
 
@@ -85,38 +86,47 @@ const projects: Project[] = [
 const companies: Company[] = [
   {
     id: "times",
+    name: "Times Group",
     logo: "logos/times.png",
   },
   {
     id: "undp",
+    name: "UNDP",
     logo: "logos/undp.png",
   },
   {
     id: "tnm",
+    name: "TNM",
     logo: "logos/tnm.png",
   },
   {
     id: "mybucks",
+    name: "MyBucks",
     logo: "logos/mybucks.png",
   },
   {
     id: "oaf",
+    name: "One Acre Fund",
     logo: "logos/oaf.png",
   },
   {
     id: "bmg",
+    name: "Bill & Melinda Gates Foundation",
     logo: "logos/bmg.png",
   },
   {
     id: "nbs",
+    name: "NBS Bank",
     logo: "logos/nbs.png",
   },
   {
     id: "ugi",
+    name: "United General Insurance",
     logo: "logos/ugi.png",
   },
   {
     id: "mtl",
+    name: "MTL",
     logo: "logos/mtl.png",
   },
 ]
@@ -218,7 +228,7 @@ function WorkPage() {
     <>
       <div className="container p-4">
         <ArticleContainer classOverrides="xl:px-36 flex flex-col items-center">
-          <h3 className="my-3 text-2xl">My Magic Toolbox  🛠  </h3>
+          <h1 className="my-3 text-2xl">My Magic Toolbox <span aria-hidden="true">🛠</span></h1>
           <p className="text-center lg:w-2/3">I've been coding  professionally for <code>6++</code> years.  I've  worked  with so many different technologies, but below are a few that I've come to particularly enjoy</p>
           <div style={{ transform: `perspective(1200px) rotateY(0deg)` }} className="flex flex-col w-full p-2 py-8 my-8 rounded-lg md:p-6 shadow-sm lg:mt-16 lg:w-2/3 gap-y-8 bg-gradient-to-bl bg-accent/50 from-base-100">
             {skills.map((skill, index) => <Skill key={skill.id} index={index} skill={skill} intersected={findIntersected(skill.id)} />)}
@@ -226,17 +236,19 @@ function WorkPage() {
         </ArticleContainer>
       </div>
       <div className="flex flex-col items-center px-4 py-12 mt-12 overflow-x-hidden text-neutral-content bg-neutral">
-        <h3 className="my-3 text-2xl font-bold">UR In Great Company</h3>
+        <h2 className="my-3 text-2xl font-bold">UR In Great Company</h2>
         <p className="text-center">I've been extremely priviledged to do work with these awesome companies over the years</p>
         <div className="relative overflow-hidden" style={{ height: `${logosContainerRef.current?.clientHeight}px` }}>
-          <div ref={logosContainerRef} className="inline-flex p-8 overflow-x-hidden gap-x-12 animate-logos">
+          {/* The marquee repeats every logo, so screen readers get one plain list instead */}
+          <ul className="sr-only">{companies.map(company => <li key={company.id}>{company.name}</li>)}</ul>
+          <div ref={logosContainerRef} aria-hidden="true" className="inline-flex p-8 overflow-x-hidden gap-x-12 animate-logos motion-reduce:animate-none">
             {companies.map(company =>
-              <div id={company.id} className="w-40 h-20 overflow-none"><img src={company.logo} alt={company.id} /></div>
+              <div key={company.id} className="w-40 h-20 overflow-none"><img src={company.logo} alt="" /></div>
             )}
           </div>
-          <div className="inline-flex p-8 overflow-x-hidden gap-x-12 animate-logosMd">
+          <div aria-hidden="true" className="inline-flex p-8 overflow-x-hidden gap-x-12 animate-logosMd motion-reduce:hidden">
             {companies.map(company =>
-              <div id={company.id} className="w-40 h-20 overflow-none"><img src={company.logo} alt={company.id} /></div>
+              <div key={company.id} className="w-40 h-20 overflow-none"><img src={company.logo} alt="" /></div>
             )}
           </div>
         </div>
@@ -245,7 +257,7 @@ function WorkPage() {
         <animated.div id="timeline">
           <ArticleContainer classOverrides="flex flex-row my-8">
             <div className="hidden lg:w-2/5 lg:block">
-              <Image width={600} height={600} src="/img/3d/blog.png" className="border" />
+              <Image width={600} height={600} src="/img/3d/blog.png" alt="" className="border" />
             </div>
             <div className="w-full lg:w-3/5">
               {projects.map((project, index) => <ProjectTab key={project.id} project={project} index={index} />)}
@@ -259,31 +271,33 @@ function WorkPage() {
 
 function ProjectTab({ index, project }: { index: number, project: Project }) {
   return (
-    <div tabIndex={index} className="w-full my-6 border-b collapse collapse-plus">
-      <input type="checkbox" />
-      <div className="text-xl text-3xl font-bold lg:text-4xl xl:text-5xl collapse-title">
+    <div className="w-full my-6 border-b collapse collapse-plus">
+      <input type="checkbox" aria-label={`Show details for ${project.title}`} />
+      <h2 className="text-2xl font-bold sm:text-3xl lg:text-4xl xl:text-5xl collapse-title">
         {`0${index + 1}. ${project.title}`}
-      </div>
+      </h2>
       <div className="collapse-content">
         {project.image ?
           <div className="hover:shadow-lg transition-all mockup-window bg-base-300">
             <div className="flex justify-center bg-base-200">
-              <Image width={900} height={450} src={project.image} className="border" />
+              <Image width={900} height={450} src={project.image} alt={`Screenshot of ${project.title}`} className="border" />
             </div>
           </div>
           : null}
-        <div className="flex justify-center w-full my-4 gap-x-3">
-          <a className="no-underline hover:no-underline" href={project.previewLink}><button className="btn btn-primary">View Live Link</button></a>
-          <a className="no-underline hover:no-underline" href={project.sourceCode ?? '#'}><button className="btn" disabled={project.sourceCode === undefined}>View Source Code</button> </a>
+        <div className="flex flex-wrap justify-center w-full my-4 gap-3">
+          <a className="no-underline btn btn-primary" href={project.previewLink} target="_blank" rel="noopener noreferrer">View Live Link</a>
+          {project.sourceCode
+            ? <a className="no-underline btn" href={project.sourceCode} target="_blank" rel="noopener noreferrer">View Source Code</a>
+            : <button className="btn" disabled>Source Code Private</button>}
         </div>
         <div className="flex flex-col-reverse md:my-8 md:gap-x-6 gap-y-8 md:gap-y-0 md:flex-row">
-          <div className="w-full md:w-1/2">{project.description.split('\n').map(par => <p className="my-3 text-lg">{par}</p>)}</div>
+          <div className="w-full md:w-1/2">{project.description.split('\n').map(par => <p key={par} className="my-3 text-lg">{par}</p>)}</div>
           <div className="flex flex-col w-full gap-y-3 md:w-1/2">
             <div>
-              {Object.entries(project.metadata).map(entry => <Metafield title={entry[0]} description={entry[1]} />)}
+              {Object.entries(project.metadata).map(entry => <Metafield key={entry[0]} title={entry[0]} description={entry[1]} />)}
             </div>
-            <div className="flex gap-x-3">
-              {project.tags.map(tag => <span className="badge">{tag}</span>)}
+            <div className="flex flex-wrap gap-3">
+              {project.tags.map(tag => <span key={tag} className="badge">{tag}</span>)}
             </div>
           </div>
         </div>
@@ -295,8 +309,8 @@ function ProjectTab({ index, project }: { index: number, project: Project }) {
 function Metafield({ title, description }: { title: string, description: string }) {
   return (
     <div className="flex flex-row justify-between py-3 my-1 uppercase border-b border-dashed">
-      <h4 className="font-semibold">{title}</h4>
-      <h5>{description}</h5>
+      <span className="font-semibold">{title}</span>
+      <span>{description}</span>
     </div>
   )
 }
@@ -312,11 +326,11 @@ function Skill({ skill, intersected, index }: { skill: Skill, intersected: boole
 
   return (
     <div id={skill.id} className="flex flex-row justify-start w-full mx-auto gap-x-4">
-      <div className="w-1/4">
-        <h3 className="my-2 font-medium text-center uppercase">{skill.name}</h3>
+      <div className="w-24 shrink-0 sm:w-1/4">
+        <h2 className="my-2 text-sm font-medium text-center uppercase sm:text-base">{skill.name}</h2>
       </div>
-      <div className="flex flex-col items-start w-3/4">
-        <animated.div className="h-8 rounded-lg bg-neutral dark:bg-accent" style={props} />
+      <div className="flex flex-col items-start min-w-0 grow">
+        <animated.div role="presentation" className="h-8 rounded-lg bg-neutral dark:bg-accent" style={props} />
         <div className="my-2 badge">{skill.years} year{`${skill.years > 1 ? `s` : ``}`}</div>
       </div>
     </div>
