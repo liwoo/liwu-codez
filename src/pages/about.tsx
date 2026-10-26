@@ -1,328 +1,211 @@
+import { GetStaticProps } from "next"
+import Head from "next/head"
+import { useTheme } from "next-themes"
+import { CSSProperties, useEffect, useRef, useState } from "react"
+import Modal from "../components/modal"
+import { panelFor } from "../components/studio/panels"
+import RoomScene, { FRAMES, HOTSPOTS, HotspotId } from "../components/studio/room-scene"
+import { Post } from "../lib/blog-config"
+import { fetchPosts } from "../lib/posts"
 
-import { Alignment, Fit } from "rive-react"
-import BackgroundAnimation, { AnimationContext } from "../components/background-animation"
-import Image from "next/image"
-import ArticleContainer from "../components/article-container"
-import { useContext, useEffect, useRef, useState } from "react"
-import { animated, config, useSpring } from "@react-spring/web"
-import Terminal from "../components/icons/terminal"
-import Streaming from "../components/icons/streaming"
-import Reading from "../components/icons/reading"
-import useWindowSize from "../hooks/use-window-size"
-import Link from "next/link"
-
-import { Activity, DescriptiveWord, Label, milestones, monthYear, Service, services, words } from "../data/about"
-
-// Full class names (not built from strings) so Tailwind generates them.
-// The tint carries the label colour; text stays base-content so it passes WCAG AA in both themes.
-const labelStyles: { [key in Label]: string } = {
-  personal: "bg-personal/30 border-personal",
-  professional: "bg-professional/30 border-professional",
-  education: "bg-education/30 border-education",
-  other: "bg-other/30 border-other",
+interface StudioProps {
+  posts: Post[]
 }
 
-function AboutPage() {
-  const initialMilestones = milestones.filter(milestone => typeof milestone !== 'number').map(milestone => {
-    return {
-      id: (milestone as Activity).id,
-      intersected: false,
-      touched: 0
-    }
-  })
+type PanelId = Exclude<HotspotId, "lamp">
 
-  const initialServices = services.map(service => {
-    return {
-      id: service.id,
-      intersected: false,
-      touched: 0
-    }
-  })
+// Pan (walk-through) mode kicks in when the 16:9 room is clearly wider than the screen
+const isNarrow = () => (window.innerHeight * 16) / 9 > window.innerWidth * 1.15
+const prefersReducedMotion = () => window.matchMedia?.("(prefers-reduced-motion: reduce)").matches
 
-  const initialIntersected = [...initialMilestones, ...initialServices]
+const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max)
 
-  const [intersected, setIntersected] = useState(initialIntersected)
-  const [statsIntersected, setStatsIntersected] = useState(false)
+function nearestFrame(x: number): number {
+  return FRAMES.reduce((best, f, i) => Math.abs(f.center - x) < Math.abs(FRAMES[best].center - x) ? i : best, 0)
+}
 
-  const [timelineHeight, setTimelineHeight] = useState(0)
-  const windowSize = useWindowSize()
-
-  const interactions = useContext(AnimationContext)
-
+export default function Studio({ posts }: StudioProps) {
+  const { resolvedTheme, setTheme } = useTheme()
+  const [open, setOpen] = useState<PanelId | null>(null)
+  const [exploring, setExploring] = useState(false)
+  const [announcement, setAnnouncement] = useState("")
+  const [introOpen, setIntroOpen] = useState(true)
+  const [pan, setPan] = useState(false)
+  const [frame, setFrame] = useState(0)
+  const introAutoHidden = useRef(false)
+  const wrapperRef = useRef<HTMLDivElement>(null)
+  const stageRef = useRef<HTMLDivElement>(null)
+  const roomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        const refMilestone = intersected.find(milestone => milestone.id === entry.target.id)
-        if (!refMilestone.intersected) {
-          refMilestone.intersected = entry.isIntersecting
-          setIntersected([...intersected])
-        }
-      })
-    })
-
-    milestones.filter(milestone => typeof milestone !== 'number').forEach(milestone => {
-      const refMilestone = document.getElementById((milestone as Activity).id)
-      if (refMilestone) {
-        observer.observe(refMilestone)
-      }
-    })
-
-
-    services.forEach(service => {
-      const refService = document.getElementById(service.id)
-      if (refService) {
-        observer.observe(refService)
-      }
-    })
-
-    const statsObserver = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          setStatsIntersected(true)
-        }
-      })
-    }, { threshold: 0.2 })
-
-    const statsRef = document.getElementById('stats')
-
-    if (statsRef) {
-      statsObserver.observe(statsRef)
-    }
-
+    const update = () => setPan(isNarrow())
+    update()
+    window.addEventListener("resize", update)
+    return () => window.removeEventListener("resize", update)
   }, [])
 
+  // Walk-through: vertical page scroll slides the room sideways, and CSS scroll-snap
+  // stops on each frame. The transform is written straight to the DOM to stay smooth.
   useEffect(() => {
-    const timeline = document.getElementById("timeline")
-    if (timeline) {
-      setTimelineHeight(timeline.clientHeight)
+    if (!pan) return
+    const html = document.documentElement
+    html.classList.add("studio-snap")
+    let raf = 0
+
+    const render = () => {
+      raf = 0
+      const wrapper = wrapperRef.current
+      const stage = stageRef.current
+      const room = roomRef.current
+      if (!wrapper || !stage || !room) return
+      const roomWidth = room.offsetWidth
+      const stageWidth = stage.clientWidth
+      const travel = wrapper.offsetHeight - stage.clientHeight
+      const progress = travel > 0 ? clamp(-wrapper.getBoundingClientRect().top / travel, 0, 1) : 0
+      const position = progress * (FRAMES.length - 1)
+      const xs = FRAMES.map(f => clamp((f.center * roomWidth) / 1600 - stageWidth / 2, 0, roomWidth - stageWidth))
+      const i = Math.floor(position)
+      const x = xs[i] + ((xs[i + 1] ?? xs[i]) - xs[i]) * (position - i)
+      room.style.transform = `translate3d(${-x}px, 0, 0)`
+      setFrame(Math.round(position))
     }
-  }, [windowSize])
+    const schedule = () => { if (!raf) raf = requestAnimationFrame(render) }
 
-  const START_FROM = 2000
+    render()
+    window.addEventListener("scroll", schedule, { passive: true })
+    window.addEventListener("resize", schedule)
+    return () => {
+      html.classList.remove("studio-snap")
+      window.removeEventListener("scroll", schedule)
+      window.removeEventListener("resize", schedule)
+      cancelAnimationFrame(raf)
+      if (roomRef.current) roomRef.current.style.transform = ""
+    }
+  }, [pan])
 
-  const contributionProps = useSpring({
-    val: statsIntersected ? 615 : 0,
-    from: { val: 0 },
-    config: config.slow,
-    delay: 100
-  })
+  // Once someone starts walking around on a phone, tuck the intro away (once; "?" brings it back)
+  useEffect(() => {
+    if (pan && frame > 0 && !introAutoHidden.current) {
+      introAutoHidden.current = true
+      setIntroOpen(false)
+    }
+  }, [pan, frame])
 
-  const streamsProps = useSpring({
-    val: statsIntersected ? 4200 : 0,
-    from: { val: 0 },
-    config: config.slow,
-    delay: 200
-  })
-
-  const readsProps = useSpring({
-    val: statsIntersected ? 60 : 0,
-    from: { val: 0 },
-    config: config.slow,
-    delay: 300
-  })
-
-  const titleStyles = useSpring({
-    from: { translateY: -50, opacity: 0 },
-    to: { translateY: 0, opacity: 1 },
-    delay: START_FROM,
-    immediate: interactions.loaded
-  });
-
-  const objectStyles = useSpring({
-    from: { scale: 0, opacity: 0 },
-    to: { scale: 1, opacity: 1 },
-    delay: START_FROM + 600,
-    config: config.wobbly,
-    immediate: interactions.loaded
-  });
-
-  const contentStyles = useSpring({
-    from: { opacity: 0 },
-    to: { opacity: 1 },
-    delay: START_FROM + 3000,
-    immediate: interactions.loaded
-  });
-
-  const wordsStlyes = useSpring({
-    from: { translateY: -20, opacity: 0 },
-    to: { translateY: 0, opacity: 1 },
-    delay: START_FROM + 1500,
-    config: config.slow,
-    immediate: interactions.loaded
-  });
-
-  return (
-    <div className="container p-4">
-      <ArticleContainer classOverrides="flex xl:px-36 flex-col md:flex-row flex-col-reverse md:flex-row-reverse items-start xl:-mt-16">
-        <>
-          <div className="w-full md:w-2/3">
-            <animated.div style={titleStyles}>
-              <h1 className="text-2xl font-bold leading-tight xl:mt-20 md:text-4xl lg:text-5xl">💬 More About <code>{"<Me />"}</code></h1>
-              <p className="my-4 text-xl">I'm a Christian, Hubby, Daddy, Rapper and Software Engineer from Blantyre, Malawi  🇲🇼 .  I believe that Tech <span className="underline decoration-primary">is the fastest route towards generational wealth for underprivileged minorities</span>, and I'm a strong advocate for teaching it to whoever will listen!</p>
-              <Link href="/about/studio"><a className="my-2 no-underline btn btn-secondary">Step into my studio <span aria-hidden="true" className="ml-2">→</span></a></Link>
-              <p className="my-4 text-sm">I asked a few of my mates to describe me in 4 words, and here's what they came up with:</p>
-            </animated.div>
-            <animated.div style={wordsStlyes}>
-              {words.map(word => (
-                <DescriptiveWord key={word.word} word={word} />
-              ))}
-            </animated.div>
-          </div>
-          <animated.div style={objectStyles} className="w-1/2 mx-auto mb-8 -mt-16 md:-mt-0 md:mb-0 md:mx-0 md:w-1/3">
-            <Image width={600} height={797} src="/img/jeremiah.jpg" alt="Jeremiah Chienda" className="rounded-lg" layout="responsive" objectFit="cover" priority />
-            <div className="hidden my-20 md:block">
-              <blockquote>Success isn't about how much money you make, it's about the difference you make in people's lives </blockquote>
-              <cite>Michelle Obama</cite>
-            </div>
-          </animated.div>
-        </>
-      </ArticleContainer>
-      <div className="py-4 my-8 bg-neutral text-neutral-content">
-        <ArticleContainer classOverrides="flex flex-col p-8 items-center">
-          <h2 className="my-3 text-2xl text-neutral-content">My Specialities</h2>
-          <p className="text-center text-neutral-content">Here are a few things that I've spent <code className="text-secondary-content">{'hours |> times |> 1000s'}</code> perfecting, and have come  pretty darn good at...</p>
-          <div className="my-8 mt-12 xl:mt-16 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-            {services.map(service => (
-              <Service key={service.id} intersected={findIntersected(service.id)} service={service} />
-            ))}
-          </div>
-          <Link href="/contact"><a className="my-4 no-underline btn btn-lg btn-primary">Get in Touch</a></Link>
-        </ArticleContainer>
-      </div>
-      <animated.div style={contentStyles}>
-        <ArticleContainer classOverrides="flex flex-col items-center w-full gap-x-6 my-8 lg:my-20">
-          <h2 className="my-6 text-lg">My Life in Numbers</h2>
-          <div id="stats" className="mx-auto shadow stats stats-vertical md:stats-horizontal bg-base-200">
-
-            <div className="stat">
-              <div className="stat-figure text-primary">
-                <Terminal classOverride="w-6 h-6 fill-primary" />
-              </div>
-              <div className="stat-title opacity-80">Contributions</div>
-              <animated.div className="stat-value">{contributionProps.val.to(val => Math.floor(val).toLocaleString())}</animated.div>
-              <div className="stat-desc opacity-80">This Year on Github</div>
-            </div>
-
-            <div className="stat">
-              <div className="stat-figure text-primary">
-                <Streaming classOverride="w-8 h-8 fill-primary" />
-              </div>
-              <div className="stat-title opacity-80">Monthly Streams</div>
-              <animated.div className="stat-value">{streamsProps.val.to(val => Math.floor(val).toLocaleString())}</animated.div>
-              <div className="stat-desc opacity-80">↗︎ 400 (22%)</div>
-            </div>
-
-            <div className="stat">
-              <div className="stat-figure text-primary">
-                <Reading classOverride="w-8 h-8 fill-primary" />
-              </div>
-              <div className="stat-title opacity-80">Total Reads</div>
-              <animated.div className="stat-value">{readsProps.val.to(val => Math.floor(val).toLocaleString())}</animated.div>
-              <div className="stat-desc opacity-80">of my Blog</div>
-            </div>
-
-          </div>
-        </ArticleContainer>
-      </animated.div>
-      <animated.div id="timeline">
-        <div className="absolute w-2 rounded-full inset-x-1/2 bg-base-content/20" style={{ height: timelineHeight, zIndex: -10 }} />
-        <ArticleContainer classOverrides="flex flex-col my-12 lg:mb-40">
-          {milestones.map(milestone => {
-            return typeof milestone === 'number'
-              ? <Year title={milestone} key={milestone} />
-              : <Activity milestone={milestone} key={milestone.id} intersected={findIntersected(milestone.id)} />
-          })}
-        </ArticleContainer>
-      </animated.div>
-    </div>
-  )
-
-  function findIntersected(id: string) {
-    const found = intersected.find(item => item.id === id)
-    return found.intersected
+  function goToFrame(index: number) {
+    const wrapper = wrapperRef.current
+    const stage = stageRef.current
+    if (!wrapper || !stage) return
+    const top = wrapper.getBoundingClientRect().top + window.scrollY + index * stage.clientHeight
+    window.scrollTo({ top, behavior: prefersReducedMotion() ? "auto" : "smooth" })
   }
-}
 
+  // Tabbing to an object that's off-screen walks to its frame
+  function onFocusHotspot(id: HotspotId) {
+    if (!pan) return
+    const target = nearestFrame(HOTSPOTS.find(h => h.id === id).marker[0])
+    if (target !== frame) goToFrame(target)
+  }
 
-function Service({ service, intersected }: { service: Service, intersected: boolean }): JSX.Element {
-  return (
-    <div id={service.id} className={`flex flex-col ${intersected ? 'translate-y-0' : 'translate-y-64'}  transition-all  ease-in-out duration-600 rounded-lg bg-base-200/90 text-base-content p-5`}>
-      <img src={service.icon} alt="" className="w-12 h-12 mb-4" />
-      <h3 className="my-2 text-xl font-bold">{service.title}</h3>
-      <p>{service.description}</p>
-    </div>
-  )
-}
+  function select(id: HotspotId) {
+    setExploring(false)
+    if (id === "lamp") {
+      const next = resolvedTheme === "dark" ? "light" : "dark"
+      setTheme(next)
+      setAnnouncement(next === "dark" ? "Lights off. Night mode." : "Lights on. Day mode.")
+      return
+    }
+    setOpen(id)
+  }
 
-function DescriptiveWord({ word }: { word: DescriptiveWord }) {
-  return (
-    <div className="flex items-start justify-center my-8 gap-x-8">
-      <div aria-hidden="true" className="p-4 text-2xl rounded-lg shadow bg-accent">
-        {word.emoji}
-      </div>
-      <div>
-        <h2 className="mb-3 text-xl font-bold capitalize">{word.word}</h2>
-        <p className="">{word.description}</p>
-      </div>
-    </div>
-  )
-}
-
-
-function Year({ title }: { title: number }) {
-  return (
-    <div className="flex flex-col items-center justify-center w-full my-12">
-      <h2 className="p-3 text-xl rounded bg-accent text-accent-content">{title}</h2>
-    </div>
-  )
-}
-
-function Activity({ milestone, intersected }: { milestone: Activity, intersected: boolean }) {
-  const isEven = Number(milestone.id) % 2 === 0
-  // Hide the photo slot if the image is gone, rather than leaving half the card empty.
-  // The mount check catches images that failed before hydration attached onError.
-  const imageRef = useRef<HTMLImageElement>(null)
-  const [imageFailed, setImageFailed] = useState(false)
-  useEffect(() => {
-    const img = imageRef.current
-    if (img && img.complete && img.naturalWidth === 0) setImageFailed(true)
-  }, [])
-  const props = useSpring({
-    to: { transform: `perspective(200px) rotateX(0deg) scale(0.9)`, },
-    from: { transform: intersected ? `perspective(1200px) rotateX(60deg) scale(0)` : `perspective(200px) rotateX(0deg) scale(0.9)` },
-    delay: 100,
-  })
+  const panel = open ? panelFor(open, posts) : null
 
   return (
-    <div className="w-full overflow-hidden">
-      <div className="absolute hidden w-8 h-8 -ml-3 rounded-full lg:block inset-x-1/2 bg-base-content" />
-      <animated.div style={props} id={milestone.id} className={`overflow-x-hidden flex flex-col transition-all duration-300 w-full items-center w-full md:w-3/4 p-6 mx-auto text-left shadow ${isEven ? 'lg:-ml-8' : 'lg:-mr-8'} lg:w-1/2 lg:flex-row gap-x-6 bg-base-200`}>
-        {milestone.image && !imageFailed ?
-          <div className="w-full mb-8 lg:w-1/2 lg:mb-0">
-            <img ref={imageRef} onError={() => setImageFailed(true)} className="object-contain p-3 mx-auto bg-white rounded-lg max-h-36" src={milestone.image} alt="" />
-          </div>
-          : null}
-        <div className="flex flex-col">
-          <div className="flex flex-col items-center justify-between lg:flex-row">
-            <h3 className="mb-3 text-2xl font-bold">{milestone.title}</h3>
-            <div className={`my-4 p-2 rounded text-sm uppercase border-l-4 text-base-content ${labelStyles[milestone.label]}`}>{milestone.label}</div>
-          </div>
-          <div className="text-lg">{milestone.description}</div>
-          <div className="flex flex-row justify-between mt-4">
-            <p className="text-sm font-bold"><span aria-hidden="true">&#9906; </span>{milestone.location}</p>
-            <p><span aria-hidden="true">&#9778; </span>{`${monthYear(milestone.startDate)} ${milestone.showRange ? ` - ${monthYear(milestone.endDate)}` : ''}`}</p>
+    <div
+      ref={wrapperRef}
+      className={`studio ${pan ? "studio-pan" : "relative"}`}
+      style={pan ? { "--frames": FRAMES.length } as CSSProperties : undefined}>
+      <Head>
+        <title>About · Step into my studio · Liwu Codez</title>
+      </Head>
+      {pan ? FRAMES.map((f, i) => <div key={f.label} aria-hidden="true" className="studio-snap-point" style={{ "--i": i } as CSSProperties} />) : null}
+      <div
+        ref={stageRef}
+        className={pan ? "studio-stage" : "relative"}
+        // Focus can try to scroll a clipped box sideways; the transform does the panning, so undo it
+        onScroll={pan ? e => { e.currentTarget.scrollLeft = 0 } : undefined}>
+        <div className={pan ? "h-full" : "studio-viewport"}>
+          <div ref={roomRef} className={pan ? "studio-pan-room" : "studio-room"}>
+            <RoomScene onSelect={select} onFocusHotspot={onFocusHotspot} />
           </div>
         </div>
-      </animated.div>
+
+        {pan
+          ? <nav aria-label="Walk around the room" className="absolute z-10 flex flex-col gap-3 -translate-y-1/2 right-3 top-1/2">
+            {FRAMES.map((f, i) => (
+              <button
+                key={f.label}
+                type="button"
+                onClick={() => goToFrame(i)}
+                aria-label={`Go to ${f.label}`}
+                aria-current={frame === i ? "step" : undefined}
+                className={`w-3 rounded-full transition-all shadow ${frame === i ? "h-8 bg-primary" : "h-3 bg-base-content/40"}`} />
+            ))}
+          </nav>
+          : null}
+
+        {introOpen
+          ? <section aria-labelledby="studio-title" className="absolute z-10 p-4 shadow-lg bottom-4 left-4 right-4 sm:right-auto sm:max-w-sm rounded-2xl bg-base-200/90 backdrop-blur">
+            <button type="button" onClick={() => setIntroOpen(false)} aria-label="Hide intro" className="absolute top-2 right-2 btn btn-xs btn-circle btn-ghost">
+              <span aria-hidden="true">✕</span>
+            </button>
+            <h1 id="studio-title" className="pr-6 text-xl font-bold">Welcome to my studio</h1>
+            <p className="mt-1 text-sm">
+              {pan
+                ? <>Scroll down to walk around the room, and tap anything with a glowing dot to learn more about me.</>
+                : <>Click anything with a glowing dot to learn more about me.</>} The lamp works too.
+            </p>
+            <div className="flex flex-wrap items-center gap-3 mt-3">
+              <button type="button" className="btn btn-sm btn-primary" onClick={() => setExploring(true)}>Explore as a list</button>
+              {pan && frame === 0 ? <span aria-hidden="true" className="text-xl animate-bounce motion-reduce:animate-none">↓</span> : null}
+            </div>
+          </section>
+          : <>
+            <h1 className="sr-only">Welcome to my studio</h1>
+            <button type="button" onClick={() => setIntroOpen(true)} aria-label="Show intro and list of things to explore" className="absolute z-10 shadow-lg bottom-4 left-4 btn btn-circle btn-primary">
+              <span aria-hidden="true" className="text-lg">?</span>
+            </button>
+          </>}
+
+      </div>
+
+      <p className="sr-only" aria-live="polite">{announcement}</p>
+
+      <Modal open={exploring} onClose={() => setExploring(false)} title="Explore the room" size="md">
+        <ul className="grid gap-2">
+          {HOTSPOTS.map(h => (
+            <li key={h.id}>
+              <button type="button" className="justify-start w-full normal-case btn btn-ghost bg-base-100/60" onClick={() => select(h.id)}>
+                {h.label}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </Modal>
+
+      <Modal open={panel !== null} onClose={() => setOpen(null)} title={panel?.title ?? ""} eyebrow={panel?.eyebrow} size={panel?.size}>
+        {panel?.body}
+      </Modal>
     </div>
   )
 }
 
-export default function About() {
-  return (
-    <BackgroundAnimation scene="Generic" fit={Fit.FitWidth} alignment={Alignment.TopCenter} absolute={false}>
-      <AboutPage />
-    </BackgroundAnimation>
-  )
+export const getStaticProps: GetStaticProps<StudioProps> = async () => {
+  try {
+    return { props: { posts: (await fetchPosts()).slice(0, 4) }, revalidate: 60 * 60 }
+  } catch (error) {
+    // While revalidating, throwing keeps serving the last good page
+    if (process.env.NEXT_PHASE !== "phase-production-build") throw error
+    console.warn("Building /about without posts:", error)
+    return { props: { posts: [] }, revalidate: 60 }
+  }
 }

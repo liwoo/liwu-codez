@@ -1,4 +1,4 @@
-// Shared by the classic About page and the interactive studio (/about/studio)
+// Content for the About page studio (src/components/studio/panels.tsx)
 
 export type Label = "personal" | "professional" | "education" | "other"
 
@@ -13,8 +13,6 @@ export interface Activity {
   location: string
   showRange: boolean
 }
-
-export type Milestone = Activity | number
 
 export interface DescriptiveWord {
   word: string
@@ -92,8 +90,7 @@ export const words: DescriptiveWord[] = [
 ]
 
 // Career entries mirror src/data/work-experience.ts on chienda.com (liwoo/personal-site-24)
-export const milestones: Milestone[] = [
-  1990,
+export const activities: Activity[] = [
   {
     id: "1",
     title: "👶  Born",
@@ -104,7 +101,6 @@ export const milestones: Milestone[] = [
     location: "Thyolo, Malawi",
     showRange: false,
   },
-  2006,
   {
     id: "2",
     title: "I'm on TV",
@@ -125,7 +121,6 @@ export const milestones: Milestone[] = [
     location: "Blantyre, Malawi",
     showRange: false,
   },
-  2007,
   {
     id: "4",
     title: "First Computer Program",
@@ -136,7 +131,6 @@ export const milestones: Milestone[] = [
     location: "Blantyre, Malawi",
     showRange: false,
   },
-  2011,
   {
     id: "5",
     title: "Mama we made it 🥳",
@@ -148,7 +142,6 @@ export const milestones: Milestone[] = [
     location: "Blantyre, Malawi",
     showRange: true,
   },
-  2013,
   {
     id: "6",
     title: "Hello, Core Banking",
@@ -159,7 +152,6 @@ export const milestones: Milestone[] = [
     location: "Blantyre, Malawi",
     showRange: true,
   },
-  2014,
   {
     id: "7",
     title: "Let's Disrupt Tourism",
@@ -181,7 +173,6 @@ export const milestones: Milestone[] = [
     location: "Kyoto, Japan",
     showRange: true,
   },
-  2017,
   {
     id: "9",
     title: "Wedding Bells 💒",
@@ -202,7 +193,6 @@ export const milestones: Milestone[] = [
     location: "Lilongwe, Malawi",
     showRange: true,
   },
-  2019,
   {
     id: "11",
     title: "Making (r)Apps",
@@ -223,7 +213,6 @@ export const milestones: Milestone[] = [
     location: "Kigali, Rwanda",
     showRange: true,
   },
-  2022,
   {
     id: "13",
     title: "Hej Denmark",
@@ -234,7 +223,6 @@ export const milestones: Milestone[] = [
     location: "Aarhus, Denmark",
     showRange: true,
   },
-  2023,
   {
     id: "14",
     title: "AI for 12 Million Citizens",
@@ -245,7 +233,6 @@ export const milestones: Milestone[] = [
     location: "Kigali, Rwanda",
     showRange: true,
   },
-  2025,
   {
     id: "15",
     title: "Responsible AI",
@@ -257,8 +244,6 @@ export const milestones: Milestone[] = [
     showRange: false,
   },
 ]
-
-export const activities: Activity[] = milestones.filter((m): m is Activity => typeof m !== "number")
 
 export function monthYear(date: Date): string {
   return date.toLocaleDateString("en-US", {

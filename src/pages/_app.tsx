@@ -20,7 +20,7 @@ const ThemeProvider = NextThemesProvider as React.FC<ThemeProviderProps>
 function MyApp({ Component, pageProps }: AppProps) {
 
   const router = useRouter()
-  const pathsWithoutFooter = ['/', '/contact', '/about/studio']
+  const pathsWithoutFooter = ['/', '/contact', '/about']
 
   return (
     // Single source of truth for the theme: `class` drives Tailwind's `dark:`

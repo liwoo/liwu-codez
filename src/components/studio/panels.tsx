@@ -53,7 +53,7 @@ export function panelFor(id: Exclude<HotspotId, "lamp">, posts: Post[]): Panel {
           </figure>
           <CtaRow>
             <Link href="/contact"><a className="no-underline btn btn-primary">Get in touch</a></Link>
-            <Link href="/about"><a className="no-underline btn">Classic About page</a></Link>
+            <Link href="/work"><a className="no-underline btn">See my work</a></Link>
           </CtaRow>
         </>,
       }
@@ -89,7 +89,10 @@ export function panelFor(id: Exclude<HotspotId, "lamp">, posts: Post[]): Panel {
               <span aria-hidden="true" className={`absolute -left-[7px] mt-1.5 w-3 h-3 rounded-full ${labelDot[a.label]}`} />
               <p className="text-sm opacity-80">{monthYear(a.startDate)}{a.showRange ? ` – ${monthYear(a.endDate)}` : ""} · {a.location}</p>
               <h3 className="font-bold">{a.title}</h3>
-              <p>{a.description}</p>
+              <div className="flex items-start gap-3">
+                {a.image ? <img src={a.image} alt="" className="object-contain w-12 h-12 p-1 bg-white rounded shrink-0" loading="lazy" /> : null}
+                <p>{a.description}</p>
+              </div>
             </li>
           ))}
         </ol>,

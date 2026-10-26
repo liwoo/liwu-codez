@@ -89,7 +89,7 @@ export default function Nav() {
   const switchTo = isDark ? "light" : "dark"
 
   const router = useRouter()
-  // Sub-pages (e.g. /about/studio) keep their section highlighted
+  // Sub-pages keep their section highlighted
   const isActive = (href: string) => href === "/" ? router.pathname === "/" : router.pathname === href || router.pathname.startsWith(`${href}/`)
 
   useEffect(() => {

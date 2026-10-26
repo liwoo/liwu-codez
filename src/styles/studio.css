@@ -1,4 +1,4 @@
-/* The interactive studio at /about/studio.
+/* The interactive studio (the About page).
    Colours are CSS variables so the whole room switches between day (light theme)
    and night (dark theme) with the rest of the site. */
 
@@ -185,3 +185,37 @@
 @keyframes studio-twinkle { 0%, 100% { opacity: 1 } 50% { opacity: 0.25 } }
 @keyframes studio-rgb { 0%, 100% { filter: hue-rotate(0deg) } 50% { filter: hue-rotate(180deg) } }
 @keyframes studio-bubble { 0% { opacity: 0; transform: translateY(10px) } 10%, 85% { opacity: 1; transform: none } 100% { opacity: 0 } }
+
+/* Narrow screens: scrolling down walks right through the room, snapping frame by frame.
+   The page gets one viewport of height per frame; the stage sticks while the room slides. */
+html.studio-snap { scroll-snap-type: y mandatory; }
+.studio-pan {
+  position: relative;
+  height: calc(var(--frames) * 100vh);
+  height: calc(var(--frames) * 100svh);
+}
+.studio-snap-point {
+  position: absolute;
+  left: 0;
+  width: 1px;
+  height: 100vh;
+  height: 100svh;
+  top: calc(var(--i) * 100vh);
+  top: calc(var(--i) * 100svh);
+  scroll-snap-align: start;
+  pointer-events: none;
+}
+.studio-stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+  overflow: clip;
+}
+.studio-pan-room {
+  height: 100%;
+  width: calc(100vh * 16 / 9);
+  width: calc(100svh * 16 / 9);
+  will-change: transform;
+}

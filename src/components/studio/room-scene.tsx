@@ -20,7 +20,7 @@ export interface HotspotInfo {
 }
 
 export const HOTSPOTS: HotspotInfo[] = [
-  { id: "me", label: "Say hi to Jeremiah", marker: [784, 404] },
+  { id: "me", label: "Say hi to Jeremiah", marker: [896, 404] },
   { id: "monitors", label: "What I do", marker: [1072, 338] },
   { id: "whiteboard", label: "The journey so far", marker: [1455, 135] },
   { id: "posters", label: "Faith, family & football", marker: [612, 140] },
@@ -32,19 +32,34 @@ export const HOTSPOTS: HotspotInfo[] = [
   { id: "lamp", label: "Flip the lights", marker: [1158, 418] },
 ]
 
+// On narrow screens the room is walked through frame by frame (see pages/about.tsx).
+// `center` is the x the frame centres on, in scene coordinates.
+export const FRAMES = [
+  { label: "The window", center: 250 },
+  { label: "Plants, mic & posters", center: 560 },
+  { label: "At the desk", center: 840 },
+  { label: "Coffee & the lamp", center: 1090 },
+  { label: "Whiteboard & bookshelf", center: 1320 },
+]
+
 const hotspot = (id: HotspotId) => HOTSPOTS.find(h => h.id === id)
 
 // CSS variables (see styles/studio.css) drive every colour, so day/night is pure CSS
 const fill = (name: string) => ({ fill: `var(--${name})` })
 const stroke = (name: string) => ({ stroke: `var(--${name})` })
 
-interface HotspotProps {
-  id: HotspotId
+interface SceneHandlers {
   onSelect: (id: HotspotId) => void
+  // Lets the page bring an off-screen object into view when it gets keyboard focus
+  onFocusHotspot?: (id: HotspotId) => void
+}
+
+interface HotspotProps extends SceneHandlers {
+  id: HotspotId
   children: ReactNode
 }
 
-function Hotspot({ id, onSelect, children }: HotspotProps) {
+function Hotspot({ id, onSelect, onFocusHotspot, children }: HotspotProps) {
   const { label, marker } = hotspot(id)
   const [x, y] = marker
   const tipWidth = label.length * 9.4 + 28
@@ -58,7 +73,7 @@ function Hotspot({ id, onSelect, children }: HotspotProps) {
     }
   }
   return (
-    <g className="hotspot" role="button" tabIndex={0} aria-label={label} onClick={() => onSelect(id)} onKeyDown={onKeyDown}>
+    <g className="hotspot" role="button" tabIndex={0} aria-label={label} onClick={() => onSelect(id)} onKeyDown={onKeyDown} onFocus={() => onFocusHotspot?.(id)}>
       <g className="art">{children}</g>
       <g className="marker" aria-hidden="true">
         <circle className="pulse" cx={x} cy={y} r={15} />
@@ -73,7 +88,8 @@ function Hotspot({ id, onSelect, children }: HotspotProps) {
   )
 }
 
-export default function RoomScene({ onSelect }: { onSelect: (id: HotspotId) => void }) {
+export default function RoomScene({ onSelect, onFocusHotspot }: SceneHandlers) {
+  const handlers = { onSelect, onFocusHotspot }
   return (
     <svg
       viewBox="0 0 1600 900"
@@ -122,7 +138,7 @@ export default function RoomScene({ onSelect }: { onSelect: (id: HotspotId) => v
       <polygon points="98,452 362,452 640,900 160,900" fill="#fff6c8" style={{ opacity: "var(--sunbeam-opacity)" as unknown as number }} />
 
       {/* ── Window: the view from home ─────────────── */}
-      <Hotspot id="window" onSelect={onSelect}>
+      <Hotspot id="window" {...handlers}>
         <rect x="86" y="116" width="288" height="348" rx="6" style={fill("baseboard")} />
         <g clipPath="url(#window-clip)">
           <rect x="98" y="128" width="264" height="324" fill="url(#sky)" />
@@ -167,7 +183,7 @@ export default function RoomScene({ onSelect }: { onSelect: (id: HotspotId) => v
       </g>
 
       {/* ── Posters (Gunners shield, VR portrait, "Programmer") ── */}
-      <Hotspot id="posters" onSelect={onSelect}>
+      <Hotspot id="posters" {...handlers}>
         <rect x="560" y="120" width="106" height="150" rx="4" style={fill("poster-red")} />
         <path d="M579 145 H647 V200 Q647 240 613 256 Q579 240 579 200 Z" fill="#fff" opacity="0.92" />
         <path d="M586 152 H640 V198 Q640 232 613 246 Q586 232 586 198 Z" style={fill("poster-red")} />
@@ -188,7 +204,7 @@ export default function RoomScene({ onSelect }: { onSelect: (id: HotspotId) => v
       </Hotspot>
 
       {/* ── Whiteboard: the journey so far ─────────── */}
-      <Hotspot id="whiteboard" onSelect={onSelect}>
+      <Hotspot id="whiteboard" {...handlers}>
         <g transform="translate(-50 0)">
         <rect x="1186" y="110" width="350" height="290" rx="6" style={fill("board-frame")} />
         <rect x="1196" y="120" width="330" height="270" rx="3" style={fill("board")} />
@@ -220,7 +236,7 @@ export default function RoomScene({ onSelect }: { onSelect: (id: HotspotId) => v
       </Hotspot>
 
       {/* ── Bookshelf: latest writing ─────────────── */}
-      <Hotspot id="shelf" onSelect={onSelect}>
+      <Hotspot id="shelf" {...handlers}>
         <g transform="translate(-50 0)">
         <rect x="1226" y="452" width="282" height="340" rx="6" style={fill("shelf")} />
         <rect x="1240" y="466" width="254" height="312" style={fill("shelf-dark")} />
@@ -246,7 +262,7 @@ export default function RoomScene({ onSelect }: { onSelect: (id: HotspotId) => v
       </Hotspot>
 
       {/* ── Floor plant (monstera) ─────────────────── */}
-      <Hotspot id="plant" onSelect={onSelect}>
+      <Hotspot id="plant" {...handlers}>
         <g className="plant-sway">
           {[
             "M470 700 Q420 640 400 560 Q450 580 470 700",
@@ -282,7 +298,7 @@ export default function RoomScene({ onSelect }: { onSelect: (id: HotspotId) => v
       <ellipse cx="840" cy="420" rx="330" ry="150" fill="url(#screen-glow)" style={{ opacity: "var(--glow-opacity)" as unknown as number }} aria-hidden="true" />
 
       {/* ── Dual monitors: what I do ───────────────── */}
-      <Hotspot id="monitors" onSelect={onSelect}>
+      <Hotspot id="monitors" {...handlers}>
         {[[702, 498], [966, 498]].map(([x, y]) => (
           <g key={x}>
             <rect x={x} y={y} width="16" height="48" style={fill("metal-dark")} />
@@ -334,7 +350,7 @@ export default function RoomScene({ onSelect }: { onSelect: (id: HotspotId) => v
       </Hotspot>
 
       {/* ── Mic on a stand: Liwu the rapper ────────── */}
-      <Hotspot id="mic" onSelect={onSelect}>
+      <Hotspot id="mic" {...handlers}>
         <path d="M548 556 L566 520 L584 556" fill="none" style={stroke("mic-stand")} strokeWidth="4" strokeLinecap="round" />
         <line x1="566" y1="520" x2="566" y2="482" style={stroke("mic-stand")} strokeWidth="5" />
         <rect x="553" y="440" width="26" height="48" rx="13" style={fill("mic")} />
@@ -354,7 +370,7 @@ export default function RoomScene({ onSelect }: { onSelect: (id: HotspotId) => v
       </g>
 
       {/* ── Coffee mug: buy me a coffee ────────────── */}
-      <Hotspot id="mug" onSelect={onSelect}>
+      <Hotspot id="mug" {...handlers}>
         <g className="steam" fill="none" style={stroke("steam")} strokeWidth="3" strokeLinecap="round" opacity="0.8">
           <path d="M1038 520 Q1032 510 1038 500 Q1044 490 1038 480" />
           <path d="M1048 522 Q1042 512 1048 502 Q1054 492 1048 482" />
@@ -367,7 +383,7 @@ export default function RoomScene({ onSelect }: { onSelect: (id: HotspotId) => v
 
       {/* ── Desk lamp: flips the theme ─────────────── */}
       <polygon points="1086,452 1124,446 1170,566 980,566" fill="url(#lamp-light)" style={{ opacity: "var(--lamp-opacity)" as unknown as number }} aria-hidden="true" />
-      <Hotspot id="lamp" onSelect={onSelect}>
+      <Hotspot id="lamp" {...handlers}>
         <ellipse cx="1132" cy="556" rx="28" ry="7" fill="#222" />
         <path d="M1132 552 L1150 470 L1112 440" fill="none" stroke="#2b2b30" strokeWidth="6" strokeLinejoin="round" />
         <circle cx="1150" cy="470" r="6" fill="#444" />
@@ -387,7 +403,7 @@ export default function RoomScene({ onSelect }: { onSelect: (id: HotspotId) => v
       <ellipse cx="840" cy="856" rx="270" ry="26" fill="none" style={stroke("rug-pattern")} strokeWidth="3" strokeDasharray="14 10" aria-hidden="true" />
 
       {/* ── Me, at the desk ────────────────────────── */}
-      <Hotspot id="me" onSelect={onSelect}>
+      <Hotspot id="me" {...handlers}>
         <g className="breathe">
           {/* Arms reach forward to the keyboard */}
           <g className="typing-left">
@@ -430,10 +446,11 @@ export default function RoomScene({ onSelect }: { onSelect: (id: HotspotId) => v
         {[760, 800, 880, 920].map(x => <circle key={x} cx={x} cy="820" r="8" fill="#111" />)}
         {/* Hello bubble on arrival */}
         <g className="bubble" aria-hidden="true">
-          <rect x="902" y="356" width="196" height="46" rx="16" fill="#fff" stroke="#032f4c" strokeWidth="2" />
-          <path d="M916 400 L904 418 L932 402 Z" fill="#fff" stroke="#032f4c" strokeWidth="2" strokeLinejoin="round" />
-          <rect x="912" y="398" width="24" height="5" fill="#fff" />
-          <text x="1000" y="385" textAnchor="middle" fill="#032f4c" fontFamily="Space Grotesk, sans-serif" fontWeight="700" fontSize="17">Hey! Look around 👋🏾</text>
+          <rect x="650" y="338" width="140" height="64" rx="16" fill="#fff" stroke="#032f4c" strokeWidth="2" />
+          <path d="M766 400 L790 418 L750 402 Z" fill="#fff" stroke="#032f4c" strokeWidth="2" strokeLinejoin="round" />
+          <rect x="746" y="398" width="24" height="5" fill="#fff" />
+          <text x="720" y="364" textAnchor="middle" fill="#032f4c" fontFamily="Space Grotesk, sans-serif" fontWeight="700" fontSize="17">Hey! 👋🏾</text>
+          <text x="720" y="388" textAnchor="middle" fill="#032f4c" fontFamily="Space Grotesk, sans-serif" fontWeight="700" fontSize="17">Look around</text>
         </g>
       </Hotspot>
 
