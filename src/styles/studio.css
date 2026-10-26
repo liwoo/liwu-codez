@@ -1,0 +1,221 @@
+/* The interactive studio (the About page).
+   Colours are CSS variables so the whole room switches between day (light theme)
+   and night (dark theme) with the rest of the site. */
+
+.studio {
+  --wall-top: #efe3d0;
+  --wall-bottom: #e0cfb6;
+  --floor: #b98a5e;
+  --floor-line: #a3754c;
+  --baseboard: #f6eee2;
+  --sky-top: #7fc4ee;
+  --sky-bottom: #d9effa;
+  --hill-far: #9aa5cc;
+  --hill-mid: #6e7ba8;
+  --hill-near: #4b547b;
+  --curtain: #e9c46a;
+  --curtain-shade: #d4a944;
+  --desk: #4a2e24;
+  --desk-edge: #3a231b;
+  --desk-shadow: #2a1812;
+  --metal: #c9ccd3;
+  --metal-dark: #8d929c;
+  --bezel: #16161a;
+  --screen: #0f1629;
+  --chair: #1b1b20;
+  --chair-accent: #c8102e;
+  --shirt: #f5c518;
+  --shirt-shade: #d9a915;
+  --skin: #6b4428;
+  --skin-shade: #55351f;
+  --hair: #17110d;
+  --hair-light: #2c211a;
+  --chain: #e7b547;
+  --board: #fafaf5;
+  --board-frame: #a9adb6;
+  --board-ink: #1d4e89;
+  --board-red: #d7263d;
+  --shelf: #7a5038;
+  --shelf-dark: #5e3b28;
+  --rug: #33669a;
+  --rug-pattern: #fad9ba;
+  --pot: #ede6da;
+  --pot-shade: #d3c8b6;
+  --leaf: #3f8f4e;
+  --leaf-dark: #2f6e3b;
+  --leaf-light: #5cad62;
+  --mug: #33669a;
+  --poster-red: #c8102e;
+  --poster-orange: #f28c28;
+  --poster-dark: #121212;
+  --note-yellow: #fcee20;
+  --note-pink: #f7a8c4;
+  --mic: #2b2b30;
+  --mic-stand: #1d1d21;
+  --mic-grille: #55555e;
+  --steam: #9a8f80;
+  --hotspot: #33669a;
+  --hotspot-ring: rgba(51, 102, 154, 0.5);
+  --tip-bg: #032f4c;
+  --tip-text: #ffffff;
+  --sun-opacity: 1;
+  --moon-opacity: 0;
+  --stars-opacity: 0;
+  --clouds-opacity: 1;
+  --sunbeam-opacity: 0.22;
+  --lamp-opacity: 0;
+  --glow-opacity: 0.15;
+}
+
+.dark .studio {
+  --wall-top: #2d1f33;
+  --wall-bottom: #22172a;
+  --floor: #3b2620;
+  --floor-line: #2c1c18;
+  --baseboard: #3a2a40;
+  --sky-top: #160820;
+  --sky-bottom: #631948;
+  --hill-far: #5a2257;
+  --hill-mid: #3d1443;
+  --hill-near: #240a2b;
+  --curtain: #7a3e68;
+  --curtain-shade: #5e2e50;
+  --desk: #2e1c17;
+  --desk-edge: #24150f;
+  --desk-shadow: #140b08;
+  --metal: #8f93a0;
+  --metal-dark: #5d616c;
+  --board: #d8d3de;
+  --board-frame: #6f7380;
+  --shelf: #4a2f22;
+  --shelf-dark: #36211a;
+  --rug: #631948;
+  --rug-pattern: #fcee20;
+  --pot: #b9b0a3;
+  --pot-shade: #958b7d;
+  --leaf: #2e6b3a;
+  --leaf-dark: #214f2b;
+  --leaf-light: #3f8a4b;
+  --mic: #5c5c68;
+  --mic-stand: #45454f;
+  --mic-grille: #8a8a96;
+  --steam: #ffffff;
+  --hotspot: #fcee20;
+  --hotspot-ring: rgba(252, 238, 32, 0.5);
+  --tip-bg: #fcee20;
+  --tip-text: #110e0e;
+  --sun-opacity: 0;
+  --moon-opacity: 1;
+  --stars-opacity: 1;
+  --clouds-opacity: 0;
+  --sunbeam-opacity: 0;
+  --lamp-opacity: 0.32;
+  --glow-opacity: 0.55;
+}
+
+/* Full-viewport room. On portrait screens the room keeps its 16:9 shape and
+   scrolls sideways, so you swipe to look around instead of losing half of it. */
+.studio-viewport {
+  height: 100vh;
+  height: 100svh;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+}
+.studio-viewport::-webkit-scrollbar { display: none; }
+.studio-room {
+  height: 100%;
+  min-width: 100%;
+  aspect-ratio: 16 / 9;
+}
+
+.studio .theme-fade * { transition: fill 600ms ease, opacity 600ms ease, stop-color 600ms ease; }
+
+/* Hotspots */
+.studio .hotspot { cursor: pointer; outline: none; }
+.studio .hotspot .art { transition: filter 200ms ease; }
+.studio .hotspot:hover .art,
+.studio .hotspot:focus-visible .art { filter: drop-shadow(0 0 10px var(--hotspot)) brightness(1.08); }
+.studio .marker .pulse { fill: var(--hotspot-ring); transform-box: fill-box; transform-origin: center; animation: studio-pulse 2.2s ease-out infinite; }
+.studio .marker .dot { fill: var(--hotspot); stroke: #fff; stroke-width: 3; }
+.studio .marker .focus-ring { fill: none; stroke: var(--hotspot); stroke-width: 3; stroke-dasharray: 6 5; opacity: 0; }
+.studio .hotspot:focus-visible .marker .focus-ring { opacity: 1; }
+.studio .tip { opacity: 0; transition: opacity 150ms ease; pointer-events: none; }
+.studio .tip rect { fill: var(--tip-bg); }
+.studio .tip text { fill: var(--tip-text); font: 600 17px "Space Grotesk", sans-serif; }
+.studio .hotspot:hover .tip,
+.studio .hotspot:focus-visible .tip { opacity: 1; }
+
+/* Ambient animation. Every loop starts and ends on the same frame, so the
+   reduced-motion rule (one 0.01ms iteration) leaves things at rest. */
+.studio .typing-left { transform-box: view-box; transform-origin: 752px 556px; animation: studio-type 0.42s ease-in-out infinite; }
+.studio .typing-right { transform-box: view-box; transform-origin: 928px 556px; animation: studio-type 0.42s ease-in-out infinite 0.21s; }
+.studio .head { transform-box: view-box; transform-origin: 840px 470px; animation: studio-nod 3.2s ease-in-out infinite; }
+.studio .locs { transform-box: view-box; transform-origin: 840px 420px; animation: studio-sway 4s ease-in-out infinite; }
+.studio .breathe { transform-box: view-box; transform-origin: 840px 600px; animation: studio-breathe 4s ease-in-out infinite; }
+.studio .plant-sway { transform-box: fill-box; transform-origin: 50% 100%; animation: studio-sway 6s ease-in-out infinite; }
+.studio .plant-sway-slow { transform-box: fill-box; transform-origin: 50% 0%; animation: studio-sway 8s ease-in-out infinite reverse; }
+.studio .steam path { animation: studio-steam 3s ease-in-out infinite; }
+.studio .steam path:nth-child(2) { animation-delay: 1s; }
+.studio .steam path:nth-child(3) { animation-delay: 2s; }
+.studio .code-scroll { animation: studio-scroll 14s linear infinite; }
+.studio .cursor { animation: studio-blink 1s steps(1) infinite; }
+.studio .bars rect { transform-box: fill-box; transform-origin: 50% 100%; animation: studio-bars 3s ease-in-out infinite; }
+.studio .bars rect:nth-child(2) { animation-delay: 0.4s; }
+.studio .bars rect:nth-child(3) { animation-delay: 0.8s; }
+.studio .bars rect:nth-child(4) { animation-delay: 1.2s; }
+.studio .bars rect:nth-child(5) { animation-delay: 1.6s; }
+.studio .clouds { animation: studio-drift 40s linear infinite; }
+.studio .stars circle { animation: studio-twinkle 3s ease-in-out infinite; }
+.studio .stars circle:nth-child(2n) { animation-delay: 1.2s; }
+.studio .stars circle:nth-child(3n) { animation-delay: 2.1s; }
+.studio .keyboard-glow { animation: studio-rgb 6s linear infinite; }
+.studio .bubble { animation: studio-bubble 7s ease-in-out 1.2s both; }
+
+@keyframes studio-pulse { 0% { transform: scale(0.6); opacity: 0.9 } 80%, 100% { transform: scale(1.9); opacity: 0 } }
+@keyframes studio-type { 0%, 100% { transform: rotate(0deg) } 50% { transform: rotate(-2.5deg) } }
+@keyframes studio-nod { 0%, 100% { transform: rotate(0deg) } 30% { transform: rotate(1.5deg) } 60% { transform: rotate(-1deg) } }
+@keyframes studio-sway { 0%, 100% { transform: rotate(0deg) } 50% { transform: rotate(2deg) } }
+@keyframes studio-breathe { 0%, 100% { transform: scaleY(1) } 50% { transform: scaleY(1.012) } }
+@keyframes studio-steam { 0%, 100% { opacity: 0; transform: translateY(0) } 30% { opacity: 0.7 } 70% { opacity: 0; transform: translateY(-22px) } }
+@keyframes studio-scroll { 0%, 100% { transform: translateY(0) } 50% { transform: translateY(-120px) } }
+@keyframes studio-blink { 0%, 100% { opacity: 1 } 50% { opacity: 0 } }
+@keyframes studio-bars { 0%, 100% { transform: scaleY(1) } 50% { transform: scaleY(0.55) } }
+@keyframes studio-drift { 0%, 100% { transform: translateX(0) } 50% { transform: translateX(60px) } }
+@keyframes studio-twinkle { 0%, 100% { opacity: 1 } 50% { opacity: 0.25 } }
+@keyframes studio-rgb { 0%, 100% { filter: hue-rotate(0deg) } 50% { filter: hue-rotate(180deg) } }
+@keyframes studio-bubble { 0% { opacity: 0; transform: translateY(10px) } 10%, 85% { opacity: 1; transform: none } 100% { opacity: 0 } }
+
+/* Narrow screens: scrolling down walks right through the room, snapping frame by frame.
+   The page gets one viewport of height per frame; the stage sticks while the room slides. */
+html.studio-snap { scroll-snap-type: y mandatory; }
+.studio-pan {
+  position: relative;
+  height: calc(var(--frames) * 100vh);
+  height: calc(var(--frames) * 100svh);
+}
+.studio-snap-point {
+  position: absolute;
+  left: 0;
+  width: 1px;
+  height: 100vh;
+  height: 100svh;
+  top: calc(var(--i) * 100vh);
+  top: calc(var(--i) * 100svh);
+  scroll-snap-align: start;
+  pointer-events: none;
+}
+.studio-stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+  overflow: clip;
+}
+.studio-pan-room {
+  height: 100%;
+  width: calc(100vh * 16 / 9);
+  width: calc(100svh * 16 / 9);
+  will-change: transform;
+}

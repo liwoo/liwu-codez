@@ -31,3 +31,29 @@ cite {
   @apply py-4 before:content-["\2015"]
 }
 @import 'tailwindcss/utilities';
+
+/* Respect "reduce motion" for CSS transitions too (springs are handled in _app) */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Used by the modal (arbitrary animate-[…] values don't emit keyframes on their own) */
+@keyframes fadeIn {
+  from { opacity: 0 }
+  to { opacity: 1 }
+}
+
+@keyframes popIn {
+  from { opacity: 0; transform: translateY(16px) scale(0.98) }
+  to { opacity: 1; transform: none }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

@@ -135,21 +135,22 @@ function Contact() {
 
   return (
     <div className="container flex flex-col justify-start h-screen pt-16 xs:pt-24 md:pt-60">
-      <animated.div style={subtitleStyles} className="absolute h-12 text-xl text-center inset-1/4 top-16 lg:top-28"> <h1>Somewhere in Limbe, Blantyre...</h1> </animated.div>
+      <animated.div style={subtitleStyles} aria-hidden="true" className="absolute h-12 text-xl text-center inset-1/4 top-16 lg:top-28"> <p>Somewhere in Limbe, Blantyre...</p> </animated.div>
+      <h1 className="sr-only">Get in touch</h1>
       <animated.div
         style={titleStyles}
         className="flex flex-col items-center w-4/5 p-2 mx-auto mt-16 xs:w-full md:w-full gap-y-4 md:mt-40 sm:p-4"
       >
-        <select ref={firstSelectRef} className="w-full max-w-xs select" onChange={changeFirstSelect}>
-          <option value="default" disabled selected>I would like to connect about...</option>
-          {Object.entries(decisionTree).map(entry => <option value={entry[0]}>{entry[0]}</option>)}
+        <select ref={firstSelectRef} aria-label="What would you like to connect about?" className="w-full max-w-xs select" onChange={changeFirstSelect} defaultValue="default">
+          <option value="default" disabled>I would like to connect about...</option>
+          {Object.keys(decisionTree).map(topic => <option key={topic} value={topic}>{topic}</option>)}
         </select>
-        <select ref={secondSelectRef} className="w-full max-w-xs select" onChange={e => setSelectedDecisions({ ...selectedDecisions, secondDecision: e.currentTarget.value })} disabled={!selectedDecisions.firstDecision}>
-          <option value="default" disabled selected>I'm asking as a...</option>
-          {selectedDecisions.firstDecision ? Object.entries(decisionTree[selectedDecisions.firstDecision]).map(entry => <option value={entry[0]}>{entry[0]}</option>) : null}
+        <select ref={secondSelectRef} aria-label="Who are you asking as?" className="w-full max-w-xs select" onChange={e => setSelectedDecisions({ ...selectedDecisions, secondDecision: e.currentTarget.value })} disabled={!selectedDecisions.firstDecision} defaultValue="default">
+          <option value="default" disabled>I'm asking as a...</option>
+          {selectedDecisions.firstDecision ? Object.keys(decisionTree[selectedDecisions.firstDecision]).map(role => <option key={role} value={role}>{role}</option>) : null}
         </select>
-        <input type="email" onChange={_e => validateForm()} ref={emailRef} required disabled={!getCurrentInput()?.EmailInput} placeholder={selectedDecisions.secondDecision ? getCurrentInput()?.EmailInput : `I'll be waiting...`} className="w-full max-w-xs input" />
-        <textarea ref={messageRef} onChange={_e => validateForm()} disabled={!getCurrentInput()?.TextArea?.text} style={{ width: `${firstSelectRef.current?.clientWidth}px` }} className="textarea" placeholder={getCurrentInput()?.TextArea?.text}></textarea>
+        <input type="email" aria-label="Your email" autoComplete="email" onChange={_e => validateForm()} ref={emailRef} required disabled={!getCurrentInput()?.EmailInput} placeholder={selectedDecisions.secondDecision ? getCurrentInput()?.EmailInput : `I'll be waiting...`} className="w-full max-w-xs input" />
+        <textarea ref={messageRef} aria-label="Your message" onChange={_e => validateForm()} disabled={!getCurrentInput()?.TextArea?.text} className="w-full max-w-xs textarea" placeholder={getCurrentInput()?.TextArea?.text}></textarea>
         <animated.div
           onMouseOver={_e => interactions.startInteraction()}
           onMouseLeave={_e => interactions.endInteraction()}
