@@ -28,7 +28,8 @@ export default function BackgroundAnimation(props: Props): JSX.Element {
   const alignment = props.alignment ?? Alignment.TopRight
   const absolute = props.absolute ?? true
 
-  const { theme } = useTheme()
+  // resolvedTheme turns "system" into the actual light/dark value the Rive scene needs
+  const { resolvedTheme } = useTheme()
   const [loaded, setLoaded] = useState(false)
   const size = useWindowSize()
 
@@ -58,7 +59,7 @@ export default function BackgroundAnimation(props: Props): JSX.Element {
 
   useEffect(() => {
     toggleTheme()
-  }, [theme]);
+  }, [resolvedTheme]);
 
 
   useEffect(() => {
@@ -70,13 +71,8 @@ export default function BackgroundAnimation(props: Props): JSX.Element {
 
 
   function toggleTheme() {
-    if (rive && (theme === "dark")) {
-      changeTheme.value = 100;
-    }
-
-    if (rive && (theme === "light")) {
-      changeTheme.value = -100;
-    }
+    if (!rive || !changeTheme) return
+    changeTheme.value = resolvedTheme === "dark" ? 100 : -100;
   }
 
   function triggerInteraction(value: boolean) {

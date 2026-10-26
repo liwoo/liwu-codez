@@ -1,24 +1,23 @@
 import Head from 'next/head'
 import { AppProps } from 'next/app'
 import '../styles/index.css'
-import { ThemeProvider } from 'next-themes'
-import { useEffect } from 'react'
-import { themeChange } from 'theme-change'
+import { ThemeProvider as NextThemesProvider, ThemeProviderProps } from 'next-themes'
 import Nav from '../components/nav'
 import Footer from '../components/footer'
 import { useRouter } from 'next/router'
 
-function MyApp({ Component, pageProps }: AppProps) {
+// next-themes' typings expect React 18's PropsWithChildren; re-type it for our React 17 types
+const ThemeProvider = NextThemesProvider as React.FC<ThemeProviderProps>
 
-  useEffect(() => {
-    themeChange(false)
-  }, [])
+function MyApp({ Component, pageProps }: AppProps) {
 
   const router = useRouter()
   const pathsWithoutFooter = ['/', '/contact']
 
   return (
-    <ThemeProvider attribute="class">
+    // Single source of truth for the theme: `class` drives Tailwind's `dark:`
+    // variant and `data-theme` drives daisyUI, so they can never drift apart
+    <ThemeProvider attribute={['class', 'data-theme']} themes={['light', 'dark']} enableSystem defaultTheme="system">
       <Head>
         <title>🪴 Welcome to Liwu's Digital Garden</title>
         <meta name="description" content="Jermiah Chienda is a Malawian Software Engineer, Recording Hip-hop Artist, Youtuber and Tech Enthusiast with more than 5 years Professional Experience accross 3 industries." />

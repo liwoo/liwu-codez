@@ -153,7 +153,7 @@ function BlogPage() {
       </ArticleContainer>
       <animated.div style={contentStyles}>
         <ArticleContainer classOverrides="flex w-full gap-x-6 my-8 lg:my-2">
-          <a className={`text-2xl md:text-4xl no-underline ${`opacity-100 border-b border-offBlack dark:border-offWhite border-text border-b-2`}`}>Blog Posts</a>
+          <a className={`text-2xl md:text-4xl no-underline ${`opacity-100 border-b border-base-content border-b-2`}`}>Blog Posts</a>
           <a className={`text-2xl md:text-4xl no-underline ${`opacity-50`}`}>Videos</a>
         </ArticleContainer>
       </animated.div>

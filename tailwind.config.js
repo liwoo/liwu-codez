@@ -3,7 +3,9 @@ module.exports = {
     './src/components/**/*.{ts,tsx,js,jsx}', 
     './src/pages/**/*.{ts,tsx,js,jsx}'
   ],
-  darkMode: 'class', // or 'media' or 'class'
+  // next-themes writes both `class` and `data-theme` on <html>, so Tailwind's
+  // `dark:` variant and daisyUI's themes always switch together
+  darkMode: 'class',
   theme: {
     container: {
       center: true,
@@ -13,15 +15,15 @@ module.exports = {
         '2xl': '18rem'
       }
     },
-    colors: {
-      offBlack: '#032F4C',
-      offWhite: '#D2CBCB',
-      personal: "#D044BB",
-      professional: "#493BB4",
-      education: "#D9914D",
-      other: "#70D94D",
-    },
     extend: {
+      colors: {
+        offBlack: '#032F4C',
+        offWhite: '#D2CBCB',
+        personal: "#D044BB",
+        professional: "#493BB4",
+        education: "#D9914D",
+        other: "#70D94D",
+      },
       screens: {
         "xs": "390px"
       },
@@ -79,34 +81,50 @@ module.exports = {
     width: ['responsive']
   },
   daisyui: {
+    // Every token is set explicitly so nothing is auto-derived differently per theme.
+    // base-content is the text/icon colour (offBlack in light, offWhite in dark),
+    // base-200 is the card/surface colour.
     themes: [
       {
         light: {
-            "primary": "#33669A",
-            "secondary": "#FCEE209A",
-            "accent": "#FAD9BA",
-            "neutral": "#4B547B",
-            "base-100": "#90CDF4",
-            "info": "#3ABFF8",
-            "success": "#36D399",
-            "warning": "#FBBD23",
-            "error": "#F87272",
-          },
+          "primary": "#33669A",
+          "primary-content": "#FFFFFF",
+          "secondary": "#FCEE20",
+          "secondary-content": "#032F4C",
+          "accent": "#FAD9BA",
+          "accent-content": "#032F4C",
+          "neutral": "#4B547B",
+          "neutral-content": "#F2EFEF",
+          "base-100": "#90CDF4",
+          "base-200": "#D7ECFA",
+          "base-300": "#B4DCF6",
+          "base-content": "#032F4C",
+          "info": "#3ABFF8",
+          "success": "#36D399",
+          "warning": "#FBBD23",
+          "error": "#F87272",
         },
-      { 
-        dark: {
-        "primary": "#FCEE20",
-        "secondary": "#33669A",
-        "accent": "#631948",
-        "neutral": "#200C29",
-        "base-100": "#110E0E",
-        "info": "#3ABFF8",
-        "success": "#36D399",
-        "warning": "#FBBD23",
-        "error": "#F87272"
-        },   
       },
-      "forest"
+      {
+        dark: {
+          "primary": "#FCEE20",
+          "primary-content": "#110E0E",
+          "secondary": "#33669A",
+          "secondary-content": "#F2EFEF",
+          "accent": "#631948",
+          "accent-content": "#F2EFEF",
+          "neutral": "#200C29",
+          "neutral-content": "#D2CBCB",
+          "base-100": "#110E0E",
+          "base-200": "#1D1519",
+          "base-300": "#2A1E24",
+          "base-content": "#D2CBCB",
+          "info": "#3ABFF8",
+          "success": "#36D399",
+          "warning": "#FBBD23",
+          "error": "#F87272",
+        },
+      },
     ],
   },
   plugins: [require("daisyui")]

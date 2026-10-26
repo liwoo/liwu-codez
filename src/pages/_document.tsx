@@ -9,7 +9,7 @@ export default class MyDocument extends Document {
 
   render() {
     return (
-      <Html data-theme="dark">
+      <Html lang="en" suppressHydrationWarning>
         <Head />
         <body>
           <Main />

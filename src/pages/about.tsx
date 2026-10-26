@@ -3,13 +3,12 @@ import { Alignment, Fit } from "rive-react"
 import BackgroundAnimation, { AnimationContext } from "../components/background-animation"
 import Image from "next/image"
 import ArticleContainer from "../components/article-container"
-import { useContext, useEffect, useState } from "react"
+import { useContext, useEffect, useRef, useState } from "react"
 import { animated, config, useSpring } from "@react-spring/web"
 import Terminal from "../components/icons/terminal"
 import Streaming from "../components/icons/streaming"
 import Reading from "../components/icons/reading"
 import useWindowSize from "../hooks/use-window-size"
-import { useTheme } from "next-themes"
 import Link from "next/link"
 
 type Label = "personal" | "professional" | "education" | "other"
@@ -35,12 +34,13 @@ interface DescriptiveWord {
 }
 
 
-//record of Labels to colors
-const labelColors: { [key in Label]: string } = {
-  personal: "#D044BB",
-  professional: "#493BB4",
-  education: "#D9914D",
-  other: "#70D94D",
+// Full class names (not built from strings) so Tailwind generates them.
+// Solid chip on light backgrounds, tinted chip on dark ones.
+const labelStyles: { [key in Label]: string } = {
+  personal: "bg-personal text-white dark:bg-personal/30 dark:text-personal",
+  professional: "bg-professional text-white dark:bg-professional/30 dark:text-professional",
+  education: "bg-education text-white dark:bg-education/30 dark:text-education",
+  other: "bg-other text-offBlack dark:bg-other/30 dark:text-other",
 }
 
 interface Service {
@@ -373,10 +373,10 @@ function AboutPage() {
           </animated.div>
         </>
       </ArticleContainer>
-      <div className="py-4 my-8 bg-neutral">
+      <div className="py-4 my-8 bg-neutral text-neutral-content">
         <ArticleContainer classOverrides="flex flex-col p-8 items-center">
-          <h3 className="my-3 text-2xl text-offWhite">My Specialities</h3>
-          <p className="text-center text-offWhite">Here are a few things that I've spent <code className="text-secondary-content">{'hours |> times |> 1000s'}</code> perfecting, and have come  pretty darn good at...</p>
+          <h3 className="my-3 text-2xl text-neutral-content">My Specialities</h3>
+          <p className="text-center text-neutral-content">Here are a few things that I've spent <code className="text-secondary-content">{'hours |> times |> 1000s'}</code> perfecting, and have come  pretty darn good at...</p>
           <div className="my-8 mt-12 xl:mt-16 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
             {services.map(service => (
               <Service key={service.id} intersected={findIntersected(service.id)} service={service} />
@@ -421,7 +421,7 @@ function AboutPage() {
         </ArticleContainer>
       </animated.div>
       <animated.div id="timeline">
-        <div className="absolute w-2 rounded-full inset-x-1/2 bg-offWhite dark:bg-offBlack" style={{ height: timelineHeight, zIndex: -10 }} />
+        <div className="absolute w-2 rounded-full inset-x-1/2 bg-base-content/20" style={{ height: timelineHeight, zIndex: -10 }} />
         <ArticleContainer classOverrides="flex flex-col my-12 lg:mb-40">
           {milestones.map(milestone => {
             return typeof milestone === 'number'
@@ -442,7 +442,7 @@ function AboutPage() {
 
 function Service({ service, intersected }: { service: Service, intersected: boolean }): JSX.Element {
   return (
-    <div id={service.id} className={`flex flex-col ${intersected ? 'translate-y-0' : 'translate-y-64'}  transition-all  ease-in-out duration-600 rounded-lg dark:bg-offBlack/75 bg-offWhite/75 p-5`}>
+    <div id={service.id} className={`flex flex-col ${intersected ? 'translate-y-0' : 'translate-y-64'}  transition-all  ease-in-out duration-600 rounded-lg bg-base-200/90 text-base-content p-5`}>
       <img src={service.icon} className="w-12 h-12 mb-4" />
       <h4 className="my-2 text-xl font-bold">{service.title}</h4>
       <p>{service.description}</p>
@@ -475,7 +475,14 @@ function Year({ title }: { title: number }) {
 
 function Activity({ milestone, intersected }: { milestone: Activity, intersected: boolean }) {
   const isEven = Number(milestone.id) % 2 === 0
-  const theme = useTheme()
+  // Hide the photo slot if the image is gone, rather than leaving half the card empty.
+  // The mount check catches images that failed before hydration attached onError.
+  const imageRef = useRef<HTMLImageElement>(null)
+  const [imageFailed, setImageFailed] = useState(false)
+  useEffect(() => {
+    const img = imageRef.current
+    if (img && img.complete && img.naturalWidth === 0) setImageFailed(true)
+  }, [])
   const props = useSpring({
     to: { transform: `perspective(200px) rotateX(0deg) scale(0.9)`, },
     from: { transform: intersected ? `perspective(1200px) rotateX(60deg) scale(0)` : `perspective(200px) rotateX(0deg) scale(0.9)` },
@@ -484,17 +491,17 @@ function Activity({ milestone, intersected }: { milestone: Activity, intersected
 
   return (
     <div className="w-full overflow-hidden">
-      <div className="absolute hidden w-8 h-8 -ml-3 rounded-full lg:block inset-x-1/2 bg-offBlack dark:bg-offWhite" />
-      <animated.div style={props} id={milestone.id} className={`overflow-x-hidden flex flex-col transition-all duration-300 w-full items-center w-full md:w-3/4 p-6 mx-auto text-left shadow ${isEven ? 'lg:-ml-8' : 'lg:-mr-8'} lg:w-1/2 lg:flex-row gap-x-6 bg-offWhite dark:bg-base-100`}>
-        {milestone.image ?
+      <div className="absolute hidden w-8 h-8 -ml-3 rounded-full lg:block inset-x-1/2 bg-base-content" />
+      <animated.div style={props} id={milestone.id} className={`overflow-x-hidden flex flex-col transition-all duration-300 w-full items-center w-full md:w-3/4 p-6 mx-auto text-left shadow ${isEven ? 'lg:-ml-8' : 'lg:-mr-8'} lg:w-1/2 lg:flex-row gap-x-6 bg-base-200`}>
+        {milestone.image && !imageFailed ?
           <div className="w-full mb-8 lg:w-1/2 lg:mb-0">
-            <img className="mx-auto mask mask-squircle" src={milestone.image} />
+            <img ref={imageRef} onError={() => setImageFailed(true)} className="mx-auto mask mask-squircle" src={milestone.image} alt={milestone.title} />
           </div>
           : null}
         <div className="flex flex-col">
           <div className="flex flex-col items-center justify-between lg:flex-row">
             <div className="mb-3 text-2xl font-bold">{milestone.title}</div>
-            <div className={`my-4 p-2 rounded text-sm bg-${milestone.label}/25 text-${milestone.label} uppercase`} style={{ backgroundColor: `${labelColors[milestone.label]}${theme === 'dark' ? `50` : ``}`, color: theme === 'dark' ? labelColors[milestone.label] : `white` }}>{milestone.label}</div>
+            <div className={`my-4 p-2 rounded text-sm uppercase ${labelStyles[milestone.label]}`}>{milestone.label}</div>
           </div>
           <div className="text-lg">{milestone.description}</div>
           <div className="flex flex-row justify-between mt-4">
