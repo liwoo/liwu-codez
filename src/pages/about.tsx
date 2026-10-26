@@ -160,6 +160,7 @@ function AboutPage() {
             <animated.div style={titleStyles}>
               <h1 className="text-2xl font-bold leading-tight xl:mt-20 md:text-4xl lg:text-5xl">💬 More About <code>{"<Me />"}</code></h1>
               <p className="my-4 text-xl">I'm a Christian, Hubby, Daddy, Rapper and Software Engineer from Blantyre, Malawi  🇲🇼 .  I believe that Tech <span className="underline decoration-primary">is the fastest route towards generational wealth for underprivileged minorities</span>, and I'm a strong advocate for teaching it to whoever will listen!</p>
+              <Link href="/about/studio"><a className="my-2 no-underline btn btn-secondary">Step into my studio <span aria-hidden="true" className="ml-2">→</span></a></Link>
               <p className="my-4 text-sm">I asked a few of my mates to describe me in 4 words, and here's what they came up with:</p>
             </animated.div>
             <animated.div style={wordsStlyes}>

@@ -129,9 +129,11 @@ function BlogPage({ posts, videos }: BlogProps) {
       </animated.div>
       <animated.div style={contentStyles}>
         <div role="tabpanel" id="panel-videos" aria-labelledby="tab-videos" hidden={tab !== "videos"}>
+          <h2 className="sr-only">Videos</h2>
           <VideosPanel videos={videos} />
         </div>
         <div role="tabpanel" id="panel-posts" aria-labelledby="tab-posts" hidden={tab !== "posts"}>
+        <h2 className="sr-only">Blog Posts</h2>
         {posts.length === 0
           ? <ArticleContainer classOverrides="py-12 text-center lg:mb-28">
             <p className="text-lg">The posts are taking a breather. Read them on <a href={`${BLOG_SITE}/blog`}>chienda.com</a> in the meantime.</p>

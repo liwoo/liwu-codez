@@ -89,6 +89,8 @@ export default function Nav() {
   const switchTo = isDark ? "light" : "dark"
 
   const router = useRouter()
+  // Sub-pages (e.g. /about/studio) keep their section highlighted
+  const isActive = (href: string) => href === "/" ? router.pathname === "/" : router.pathname === href || router.pathname.startsWith(`${href}/`)
 
   useEffect(() => {
     const closeMenu = () => setIsOpen(false)
@@ -132,7 +134,7 @@ export default function Nav() {
     <ul className={`items-center justify-around hidden w-2/3 px-4 py-2 ${scrollY > SCROLL_THRESHOLD ? menuBg : ''} uppercase md:flex px-auto xl:w-1/2`}>
       {menuItems.map(item => <li key={item.label} className="my-2">
         <Link href={item.href}>
-          <a aria-current={item.href === router.pathname ? "page" : undefined} className={`${item.href === router.pathname ? activeStyle : ""} no-underline py-4 hover:text-primary transition-all`}>{item.label}</a>
+          <a aria-current={isActive(item.href) ? "page" : undefined} className={`${isActive(item.href) ? activeStyle : ""} no-underline py-4 hover:text-primary transition-all`}>{item.label}</a>
         </Link>
       </li>)}
     </ul>
@@ -145,7 +147,7 @@ export default function Nav() {
       <ul className="menu md:hidden">
         {menuItems.map(item => <li key={item.label} className="my-1">
           <Link href={item.href}>
-            <a aria-current={item.href === router.pathname ? "page" : undefined} className={`${item.href === router.pathname ? "text-primary font-bold" : ""} no-underline py-3 hover:text-primary transition-all`}>{item.label}</a>
+            <a aria-current={isActive(item.href) ? "page" : undefined} className={`${isActive(item.href) ? "text-primary font-bold" : ""} no-underline py-3 hover:text-primary transition-all`}>{item.label}</a>
           </Link>
         </li>)}
       </ul>

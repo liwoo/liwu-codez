@@ -1,6 +1,7 @@
 import Head from 'next/head'
 import { AppProps } from 'next/app'
 import '../styles/index.css'
+import '../styles/studio.css'
 import { ThemeProvider as NextThemesProvider, ThemeProviderProps } from 'next-themes'
 import Nav from '../components/nav'
 import Footer from '../components/footer'
@@ -19,7 +20,7 @@ const ThemeProvider = NextThemesProvider as React.FC<ThemeProviderProps>
 function MyApp({ Component, pageProps }: AppProps) {
 
   const router = useRouter()
-  const pathsWithoutFooter = ['/', '/contact']
+  const pathsWithoutFooter = ['/', '/contact', '/about/studio']
 
   return (
     // Single source of truth for the theme: `class` drives Tailwind's `dark:`
